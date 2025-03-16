@@ -292,3 +292,31 @@ const RealGameAnalytics = () => {
     {date: "2025-03-14", count: 7463},
     {date: "2025-03-15", count: 5005}
   ];
+  
+  // Combine platform data for charts
+  const combinedDauData = iosDau.map((item, index) => {
+    return {
+      date: item.date,
+      ios: item.count,
+      android: androidDau[index].count,
+      total: item.count + androidDau[index].count
+    };
+  });
+  
+  const combinedNewUsersData = iosNewUsers.map((item, index) => {
+    return {
+      date: item.date,
+      ios: item.count,
+      android: androidNewUsers[index].count,
+      total: item.count + androidNewUsers[index].count
+    };
+  });
+  
+  const combinedSessionsData = iosSessions.map((item, index) => {
+    return {
+      date: item.date,
+      ios: item.count,
+      android: androidSessions[index].count,
+      total: item.count + androidSessions[index].count
+    };
+  });
