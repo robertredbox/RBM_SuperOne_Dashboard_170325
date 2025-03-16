@@ -11,9 +11,8 @@ This repository contains a React-based dashboard for Super.One Fan Battle mobile
 - **Game Analytics**: Advanced player engagement and performance metrics including:
   - Daily and Monthly Active Users (DAU/MAU)
   - Session metrics (length, frequency)
-  - Retention rates
-  - Battle mode popularity
-  - Player progression analysis
+  - New user acquisition data
+  - Platform comparison insights
 - **Key Insights**: Strategic analysis of cross-platform performance
 - **Interactive Charts**: Visualizations built with Recharts for better understanding of data
 - **Responsive Design**: Optimized for both desktop and mobile viewing
@@ -24,10 +23,10 @@ This repository contains a React-based dashboard for Super.One Fan Battle mobile
 - **Total Downloads**: 4,028 (iOS: 2,039 / Android: 1,989)
 - **Total Revenue**: $1,297.04 (iOS: $373.00 / Android: $924.04)
 - **Platform Dynamics**: iOS leads in downloads (50.6%) while Android dominates revenue (71.2%)
-- **DAU Growth**: Daily Active Users grew 44% during March, reaching 1,730 users
-- **Retention**: Day 1 retention at 42%, above industry average of 35%
-- **Engagement**: Average session length increased to 9.8 minutes with 4.1 daily sessions per user
-- **Player Base**: Only 2.3% of players reach Master tier, with Gold-to-Platinum showing highest drop-off
+- **Daily Active Users**: Average 6,101 DAU across both platforms during the analysis period
+- **User Growth**: iOS DAU grew 7.4% from January to March, Android grew 3.2%
+- **New Users**: Over 33,800 new users acquired during the analysis period
+- **Session Metrics**: Android users average 2.73 sessions per user vs 2.25 for iOS
 
 ## Getting Started
 
@@ -57,6 +56,7 @@ The dashboard will be available at [http://localhost:3000](http://localhost:3000
 
 - React
 - Recharts for data visualization
+- GameAnalytics API for user engagement metrics
 - Tailwind CSS for styling
 - Responsive design for all screen sizes
 
@@ -66,15 +66,20 @@ The dashboard will be available at [http://localhost:3000](http://localhost:3000
 This section provides side-by-side comparisons of download volumes and revenue metrics across both iOS and Android platforms, with detailed charts showing daily and weekly trends.
 
 ### Game Analytics
-The Game Analytics tab offers deep insights into player behavior including:
+The Game Analytics tab offers deep insights into player behavior derived from the GameAnalytics API, including:
 - User growth metrics with platform breakdowns
 - Session length and frequency analysis
-- Player retention at different time intervals
-- Battle mode popularity distribution
-- Player progression through skill tiers
+- New user acquisition patterns
+- Monthly aggregated user activity 
+- Platform-specific engagement metrics
 
 ### Key Insights
 This section summarizes the most important findings from all data sources, highlighting opportunities for growth and optimization.
+
+## Data Sources
+
+- **Downloads & Revenue Data**: Collected from app store platforms for period January 30 - March 15, 2025
+- **Game Analytics Data**: Retrieved using GameAnalytics API for the same period, providing deeper engagement metrics that complement the store data
 
 ## License
 
