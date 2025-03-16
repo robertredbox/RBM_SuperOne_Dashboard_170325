@@ -3,7 +3,7 @@ import Header from './components/Header';
 import PlatformDownloads from './components/PlatformDownloads';
 import USDRevenue from './components/USDRevenue';
 import KeyInsights from './components/KeyInsights';
-import GameAnalytics from './components/GameAnalytics';
+import RealGameAnalytics from './components/RealGameAnalytics';
 import Footer from './components/Footer';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
           </div>
         );
       case 'analytics':
-        return <GameAnalytics />;
+        return <RealGameAnalytics />;
       case 'insights':
         return <KeyInsights />;
       default:
