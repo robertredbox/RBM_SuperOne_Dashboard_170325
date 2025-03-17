@@ -3,14 +3,15 @@
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "buildCommand": "CI=false GENERATE_SOURCEMAP=false npm run build",
-  "installCommand": "npm install --legacy-peer-deps --no-optional",
+  "installCommand": "npm install --legacy-peer-deps",
   "outputDirectory": "build",
   "framework": "create-react-app",
   "github": {
-    "silent": true
+    "silent": true,
+    "autoAlias": true
   },
   "env": {
     "NODE_OPTIONS": "--max_old_space_size=4096",
-    "NPM_FLAGS": "--legacy-peer-deps --no-optional"
+    "NPM_FLAGS": "--legacy-peer-deps"
   }
 }
