@@ -63,23 +63,30 @@ const PlatformDownloads = () => {
   const androidPercentage = parseFloat((totals.android / totals.total * 100).toFixed(1));
   const iosPercentage = parseFloat((totals.ios / totals.total * 100).toFixed(1));
 
-  // Weekly data for comparison
+  // Weekly data for comparison with shortened labels
   const weeklyData = [
-    {week: "Week 1 (Jan 30-Feb 5)", android: 524, ios: 706, total: 1230},
-    {week: "Week 2 (Feb 6-12)", android: 312, ios: 285, total: 597},
-    {week: "Week 3 (Feb 13-19)", android: 221, ios: 211, total: 432},
-    {week: "Week 4 (Feb 20-26)", android: 220, ios: 162, total: 382},
-    {week: "Week 5 (Feb 27-Mar 5)", android: 283, ios: 166, total: 449},
-    {week: "Week 6 (Mar 6-12)", android: 269, ios: 235, total: 504},
-    {week: "Week 7 (Mar 13-15)", android: 120, ios: 193, total: 313}
+    {week: "Week 1 (Jan 30-Feb 5)", shortWeek: "W1", displayWeek: "Week 1", android: 524, ios: 706, total: 1230},
+    {week: "Week 2 (Feb 6-12)", shortWeek: "W2", displayWeek: "Week 2", android: 312, ios: 285, total: 597},
+    {week: "Week 3 (Feb 13-19)", shortWeek: "W3", displayWeek: "Week 3", android: 221, ios: 211, total: 432},
+    {week: "Week 4 (Feb 20-26)", shortWeek: "W4", displayWeek: "Week 4", android: 220, ios: 162, total: 382},
+    {week: "Week 5 (Feb 27-Mar 5)", shortWeek: "W5", displayWeek: "Week 5", android: 283, ios: 166, total: 449},
+    {week: "Week 6 (Mar 6-12)", shortWeek: "W6", displayWeek: "Week 6", android: 269, ios: 235, total: 504},
+    {week: "Week 7 (Mar 13-15)", shortWeek: "W7", displayWeek: "Week 7", android: 120, ios: 193, total: 313}
   ];
   
   // Custom tooltip formatter
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+      // Find full week label for tooltip if weeklyData includes the label
+      let displayLabel = label;
+      const weekItem = weeklyData.find(item => item.shortWeek === label);
+      if (weekItem) {
+        displayLabel = weekItem.week;
+      }
+      
       return (
         <div className="bg-white p-3 rounded border shadow-sm">
-          <p className="font-semibold text-gray-800">{label}</p>
+          <p className="font-semibold text-gray-800">{displayLabel}</p>
           {payload.map((entry, index) => (
             <p key={index} style={{ color: entry.stroke || entry.fill }}>
               {`${entry.name}: ${entry.value}`}
@@ -145,10 +152,8 @@ const PlatformDownloads = () => {
               <XAxis 
                 dataKey="date" 
                 tick={{ fontSize: 12 }} 
-                angle={-45} 
-                textAnchor="end" 
-                height={70}
-                interval={2} // Show every 3rd label to avoid crowding
+                interval={4} // Show only every 5th label for better spacing
+                height={40}
               />
               <YAxis />
               <Tooltip content={<CustomTooltip />} />
@@ -159,7 +164,7 @@ const PlatformDownloads = () => {
                 name="Android" 
                 stroke="#34D399" 
                 strokeWidth={2}
-                dot={{ r: 2 }}
+                dot={{ r: 1 }}
                 activeDot={{ r: 6 }}
               />
               <Line 
@@ -168,7 +173,7 @@ const PlatformDownloads = () => {
                 name="iOS" 
                 stroke="#60A5FA" 
                 strokeWidth={2}
-                dot={{ r: 2 }}
+                dot={{ r: 1 }}
                 activeDot={{ r: 6 }}
               />
               <Line 
@@ -198,7 +203,11 @@ const PlatformDownloads = () => {
               margin={{ top: 5, right: 30, left: 20, bottom: 25 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="week" tick={{ fontSize: 11 }} angle={-45} textAnchor="end" height={80} />
+              <XAxis 
+                dataKey="shortWeek" 
+                tick={{ fontSize: 12 }} 
+                height={40}
+              />
               <YAxis />
               <Tooltip content={<CustomTooltip />} />
               <Legend />
@@ -207,6 +216,9 @@ const PlatformDownloads = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
+        <p className="text-sm text-gray-600 mt-3 text-center" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
+          W1: Jan 30-Feb 5 • W2: Feb 6-12 • W3: Feb 13-19 • W4: Feb 20-26 • W5: Feb 27-Mar 5 • W6: Mar 6-12 • W7: Mar 13-15
+        </p>
       </div>
     </div>
   );
