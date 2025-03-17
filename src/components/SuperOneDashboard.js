@@ -293,3 +293,74 @@ const SuperOneDashboard = () => {
             </div>
           </div>
         );
+        
+      case 'features':
+        return (
+          <div>
+            <h3 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-lg mb-4">Feature Comparison Analysis</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Feature Radar Chart */}
+              <div className="bg-white p-4 rounded shadow h-80">
+                <h4 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-base mb-2">Feature Competitive Analysis</h4>
+                <ResponsiveContainer width="100%" height="90%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="80%" data={featureComparisonData}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="feature" />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                    <Radar name="Super.One" dataKey="SuperOne" stroke="#FF5733" fill="#FF5733" fillOpacity={0.5} />
+                    <Radar name="1v1.LOL" dataKey="Competitor1" stroke="#82CAFF" fill="#82CAFF" fillOpacity={0.5} />
+                    <Radar name="Battle Prime" dataKey="Competitor2" stroke="#82D49F" fill="#82D49F" fillOpacity={0.5} />
+                    <Legend />
+                    <Tooltip />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Feature Strengths and Weaknesses */}
+              <div className="bg-white p-4 rounded shadow">
+                <h4 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-base mb-2">Competitive Advantages</h4>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <h5 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-sm text-green-700">Super.One Strengths</h5>
+                    <ul style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }} className="list-disc pl-5 text-sm">
+                      <li>Industry-leading social features integration</li>
+                      <li>Innovative game mechanics focused on fan engagement</li>
+                      <li>Strong user retention metrics</li>
+                      <li>Simplified onboarding process</li>
+                      <li>Efficient user interface with less clutter</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-sm text-red-700">Areas for Improvement</h5>
+                    <ul style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }} className="list-disc pl-5 text-sm">
+                      <li>Monetization strategy needs optimization (32% below category average)</li>
+                      <li>Content variety lags behind key competitors</li>
+                      <li>UI design scores well but trails market leader</li>
+                      <li>Limited localization compared to competitors (7 languages vs. 12+)</li>
+                      <li>Fan engagement features are underutilized in marketing</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Unique Selling Points */}
+            <div className="mt-6 bg-white p-4 rounded shadow">
+              <h4 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-base mb-2">Unique Selling Points</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-3 border border-green-200 rounded bg-green-50">
+                  <h5 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-sm mb-2 text-green-700">Fan-Centric Experience</h5>
+                  <p style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }} className="text-sm">Only app in the category with dedicated fan engagement systems and community-driven content curation.</p>
+                </div>
+                <div className="p-3 border border-green-200 rounded bg-green-50">
+                  <h5 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-sm mb-2 text-green-700">Social Integration</h5>
+                  <p style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }} className="text-sm">Superior social features with 28% higher sharing rates than the nearest competitor and integration with 5 major platforms.</p>
+                </div>
+                <div className="p-3 border border-green-200 rounded bg-green-50">
+                  <h5 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-sm mb-2 text-green-700">Reward Mechanics</h5>
+                  <p style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }} className="text-sm">Innovative reward system with 3.2x more engagement points and 45% higher redemption rate than category average.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
