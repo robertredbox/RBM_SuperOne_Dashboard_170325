@@ -52,17 +52,19 @@ const CompetitiveAnalysis = () => {
 
   return (
     <div className="bg-white p-4 rounded-lg shadow">
-      <h2 className="text-xl font-bold mb-4">SuperOne Competitive Analysis</h2>
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Slab:wght@500&display=swap" rel="stylesheet" />
+      
+      <h2 className="text-xl font-bold mb-4" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>SuperOne Competitive Analysis</h2>
       
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-2">App Overview</h3>
-        <p>SuperOne is a blockchain-based sports trivia gaming platform with cash prizes through Battle Royale-style gameplay, currently focused on football with plans to expand to other fan-based interests.</p>
+        <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>App Overview</h3>
+        <p style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>SuperOne is a blockchain-based sports trivia gaming platform with cash prizes through Battle Royale-style gameplay, currently focused on football with plans to expand to other fan-based interests.</p>
       </div>
       
       {/* Competitor Ratings Chart */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
-          <h3 className="text-lg font-semibold mb-2 text-blue-600">iOS Competitor Ratings</h3>
+          <h3 className="text-lg font-semibold mb-2 text-blue-600" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>iOS Competitor Ratings</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -81,7 +83,7 @@ const CompetitiveAnalysis = () => {
         </div>
         
         <div>
-          <h3 className="text-lg font-semibold mb-2 text-green-600">Android Competitor Ratings</h3>
+          <h3 className="text-lg font-semibold mb-2 text-green-600" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Android Competitor Ratings</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -103,7 +105,7 @@ const CompetitiveAnalysis = () => {
       {/* Pricing Model & Category Distribution */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
-          <h3 className="text-lg font-semibold mb-2">App Store Pricing Models</h3>
+          <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>App Store Pricing Models</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -120,11 +122,11 @@ const CompetitiveAnalysis = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-sm text-center mt-2">iOS shows monetization potential with 30% paid apps, while Android is 100% free-to-download.</p>
+          <p className="text-sm text-center mt-2" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>iOS shows monetization potential with 30% paid apps, while Android is 100% free-to-download.</p>
         </div>
         
         <div>
-          <h3 className="text-lg font-semibold mb-2">Competitive Position</h3>
+          <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Competitive Position</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart outerRadius={90} data={competitiveFactors}>
@@ -138,19 +140,19 @@ const CompetitiveAnalysis = () => {
               </RadarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-sm text-center mt-2">SuperOne excels in unique features and cash rewards, but lags in technical stability.</p>
+          <p className="text-sm text-center mt-2" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>SuperOne excels in unique features and cash rewards, but lags in technical stability.</p>
         </div>
       </div>
       
       {/* User Sentiment & Recommendations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
-          <h3 className="text-lg font-semibold mb-2">User Sentiment Analysis</h3>
+          <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>User Sentiment Analysis</h3>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-green-50 p-3 rounded">
-              <h4 className="font-medium mb-1">Positive Feedback:</h4>
-              <ul className="list-disc pl-5 text-sm">
+              <h4 className="font-medium mb-1" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Positive Feedback:</h4>
+              <ul className="list-disc pl-5 text-sm" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
                 <li>"Instant payment of winnings"</li>
                 <li>"Improving app quality"</li>
                 <li>"Visually appealing graphics"</li>
@@ -160,8 +162,8 @@ const CompetitiveAnalysis = () => {
             </div>
             
             <div className="bg-red-50 p-3 rounded">
-              <h4 className="font-medium mb-1">Negative Feedback:</h4>
-              <ul className="list-disc pl-5 text-sm">
+              <h4 className="font-medium mb-1" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Negative Feedback:</h4>
+              <ul className="list-disc pl-5 text-sm" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
                 <li>"Login/technical issues"</li>
                 <li>"Token/crypto problems"</li>
                 <li>"Development delays"</li>
@@ -172,8 +174,8 @@ const CompetitiveAnalysis = () => {
           </div>
           
           <div className="mt-4">
-            <h4 className="font-medium mb-1">Key Differentiators:</h4>
-            <ul className="list-disc pl-5">
+            <h4 className="font-medium mb-1" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Key Differentiators:</h4>
+            <ul className="list-disc pl-5" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
               <li>Only app combining sports trivia + cash prizes + blockchain</li>
               <li>Real-time payout system unlike most competitors</li>
               <li>True/false swipe interface for intuitive gameplay</li>
@@ -182,12 +184,12 @@ const CompetitiveAnalysis = () => {
         </div>
         
         <div>
-          <h3 className="text-lg font-semibold mb-2">Strategic Recommendations</h3>
+          <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Strategic Recommendations</h3>
           
           <div className="grid grid-cols-2 gap-2 mb-3">
             <div className="bg-blue-50 p-2 rounded">
-              <h4 className="font-medium">Platform</h4>
-              <ul className="list-disc pl-5 text-sm">
+              <h4 className="font-medium" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Platform</h4>
+              <ul className="list-disc pl-5 text-sm" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
                 <li>Prioritize iOS development</li>
                 <li>Maintain Android presence</li>
                 <li>Consider iOS premium features</li>
@@ -195,8 +197,8 @@ const CompetitiveAnalysis = () => {
             </div>
             
             <div className="bg-green-50 p-2 rounded">
-              <h4 className="font-medium">Product</h4>
-              <ul className="list-disc pl-5 text-sm">
+              <h4 className="font-medium" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Product</h4>
+              <ul className="list-disc pl-5 text-sm" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
                 <li>Fix technical stability</li>
                 <li>Ensure crypto transparency</li>
                 <li>Expand sports coverage</li>
@@ -206,8 +208,8 @@ const CompetitiveAnalysis = () => {
           
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-purple-50 p-2 rounded">
-              <h4 className="font-medium">Marketing</h4>
-              <ul className="list-disc pl-5 text-sm">
+              <h4 className="font-medium" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Marketing</h4>
+              <ul className="list-disc pl-5 text-sm" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
                 <li>Highlight instant payouts</li>
                 <li>Target mainstream fans</li>
                 <li>Partner with influencers</li>
@@ -215,8 +217,8 @@ const CompetitiveAnalysis = () => {
             </div>
             
             <div className="bg-yellow-50 p-2 rounded">
-              <h4 className="font-medium">Growth</h4>
-              <ul className="list-disc pl-5 text-sm">
+              <h4 className="font-medium" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Growth</h4>
+              <ul className="list-disc pl-5 text-sm" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
                 <li>Add esports/gaming trivia</li>
                 <li>Create tournaments</li>
                 <li>Add seasonal content</li>
@@ -227,8 +229,8 @@ const CompetitiveAnalysis = () => {
       </div>
       
       <div className="bg-blue-100 p-4 rounded">
-        <h3 className="text-lg font-semibold mb-2">Key Competitive Advantage</h3>
-        <p>SuperOne's unique position at the intersection of sports trivia, cash prizes, and blockchain technology creates a distinctive competitive advantage. The greatest opportunity is establishing dominance in the crypto-integrated sports trivia niche, appealing to both mainstream sports fans and crypto enthusiasts.</p>
+        <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Key Competitive Advantage</h3>
+        <p style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>SuperOne's unique position at the intersection of sports trivia, cash prizes, and blockchain technology creates a distinctive competitive advantage. The greatest opportunity is establishing dominance in the crypto-integrated sports trivia niche, appealing to both mainstream sports fans and crypto enthusiasts.</p>
       </div>
     </div>
   );
