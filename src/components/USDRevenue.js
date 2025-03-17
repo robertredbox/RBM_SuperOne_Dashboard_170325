@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import RevenueForecasting from './RevenueForecasting';
 
 const USDRevenue = () => {
   const [activeView, setActiveView] = useState('weekly');
@@ -136,6 +137,13 @@ const USDRevenue = () => {
         >
           Platform Distribution
         </button>
+        <button 
+          className={`px-4 py-2 rounded ${activeView === 'forecasting' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
+          onClick={() => setActiveView('forecasting')}
+          style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
+        >
+          Forecasting
+        </button>
       </div>
       
       {/* Charts */}
@@ -208,7 +216,20 @@ const USDRevenue = () => {
             </div>
           </div>
         )}
+        
+        {activeView === 'forecasting' && (
+          <div>
+            <h3 className="text-lg mb-4" style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }}>Revenue Forecasting Tool</h3>
+            <p className="mb-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
+              Use the sliders below to forecast future revenue based on different media spend and user lifetime value assumptions.
+            </p>
+            <RevenueForecasting />
+          </div>
+        )}
       </div>
+      
+      {/* Revenue Forecasting Component (always visible, regardless of activeView) */}
+      {activeView !== 'forecasting' && <RevenueForecasting />}
     </div>
   );
 };
