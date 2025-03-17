@@ -5,6 +5,7 @@ import USDRevenue from './components/USDRevenue';
 import KeyInsights from './components/KeyInsights';
 import RealGameAnalytics from './components/RealGameAnalytics';
 import SuperOneDashboard from './components/SuperOneDashboard';
+import CompetitiveAnalysis from './components/CompetitiveAnalysis';
 import Footer from './components/Footer';
 
 function App() {
@@ -21,8 +22,10 @@ function App() {
         );
       case 'analytics':
         return <RealGameAnalytics />;
-      case 'competitive':
+      case 'dashboard':
         return <SuperOneDashboard />;
+      case 'competitors':
+        return <CompetitiveAnalysis />;
       case 'insights':
         return <KeyInsights />;
       default:
@@ -56,10 +59,16 @@ function App() {
               Game Analytics
             </button>
             <button 
-              className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'competitive' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-              onClick={() => setActiveTab('competitive')}
+              className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'dashboard' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+              onClick={() => setActiveTab('dashboard')}
             >
-              Competitive Analysis
+              Dashboard
+            </button>
+            <button 
+              className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'competitors' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+              onClick={() => setActiveTab('competitors')}
+            >
+              Competitors
             </button>
             <button 
               className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'insights' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
