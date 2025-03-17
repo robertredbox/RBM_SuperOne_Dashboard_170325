@@ -152,7 +152,7 @@ const CompetitiveAnalysis = () => {
               <h4 className="font-medium mb-1">Positive Feedback:</h4>
               <ul className="list-disc pl-5 text-sm">
                 <li>"Instant payment of winnings"</li>
-                "Improving app quality"</li>
+                <li>"Improving app quality"</li>
                 <li>"Visually appealing graphics"</li>
                 <li>"Simple gameplay"</li>
                 <li>"Exciting cash prizes"</li>
