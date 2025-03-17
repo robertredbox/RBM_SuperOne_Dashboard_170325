@@ -13,6 +13,11 @@ This repository contains a React-based dashboard for Super.One Fan Battle mobile
   - Session metrics (length, frequency)
   - New user acquisition data
   - Platform comparison insights
+- **App Store Intelligence**: Comprehensive AppTweak metrics:
+  - Competitor analysis and market positioning
+  - Feature comparison matrix
+  - User ratings and reviews analytics
+  - Version history and feature adoption tracking  
 - **Key Insights**: Strategic analysis of cross-platform performance
 - **Interactive Charts**: Visualizations built with Recharts for better understanding of data
 - **Responsive Design**: Optimized for both desktop and mobile viewing
@@ -27,6 +32,8 @@ This repository contains a React-based dashboard for Super.One Fan Battle mobile
 - **User Growth**: iOS DAU grew 7.4% from January to March, Android grew 3.2%
 - **New Users**: Over 33,800 new users acquired during the analysis period
 - **Session Metrics**: Android users average 2.73 sessions per user vs 2.25 for iOS
+- **App Updates**: 2 iOS releases (v3.87, v3.88) and 3 Android releases (v5.2.3, v5.2.4, v5.2.5) during the period
+- **Competitor Insights**: Market position and feature analysis compared to Trivia Star, QuizTime Live, and Fan Quest Trivia
 
 ## Getting Started
 
@@ -57,6 +64,7 @@ The dashboard will be available at [http://localhost:3000](http://localhost:3000
 - React
 - Recharts for data visualization
 - GameAnalytics API for user engagement metrics
+- AppTweak MCP for app store intelligence
 - Tailwind CSS for styling
 - Responsive design for all screen sizes
 
@@ -73,6 +81,13 @@ The Game Analytics tab offers deep insights into player behavior derived from th
 - Monthly aggregated user activity 
 - Platform-specific engagement metrics
 
+### Competitive Analysis
+The new Competitive Analysis section leverages AppTweak data to provide:
+- Feature comparison matrix with key competitors
+- Market position visualization showing relative market share
+- Competitor performance metrics (downloads, ratings, DAU)
+- Strengths and areas for improvement identification
+
 ### Key Insights
 This section summarizes the most important findings from all data sources, highlighting opportunities for growth and optimization.
 
@@ -80,6 +95,11 @@ This section summarizes the most important findings from all data sources, highl
 
 - **Downloads & Revenue Data**: Collected from app store platforms for period January 30 - March 15, 2025
 - **Game Analytics Data**: Retrieved using GameAnalytics API for the same period, providing deeper engagement metrics that complement the store data
+- **App Store Intelligence**: Collected via AppTweak MCP for comprehensive market positioning and competitor analysis
+
+## Recent Updates
+- **March 17, 2025**: Added AppTweak MCP integration with competitive analysis
+- **March 15, 2025**: Updated data through March 15, 2025
 
 ## License
 
