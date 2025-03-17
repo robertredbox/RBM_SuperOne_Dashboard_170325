@@ -43,6 +43,8 @@ function App() {
   
   return (
     <div className="min-h-screen bg-gray-100 py-8">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Slab:wght@500&display=swap" rel="stylesheet" />
+      
       <div className="container mx-auto px-4">
         <Header />
         
@@ -52,36 +54,42 @@ function App() {
             <button 
               className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'downloads' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
               onClick={() => setActiveTab('downloads')}
+              style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
             >
               Downloads & Revenue
             </button>
             <button 
               className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'analytics' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
               onClick={() => setActiveTab('analytics')}
+              style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
             >
               Game Analytics
             </button>
             <button 
               className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'dashboard' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
               onClick={() => setActiveTab('dashboard')}
+              style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
             >
               Dashboard
             </button>
             <button 
               className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'competitors' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
               onClick={() => setActiveTab('competitors')}
+              style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
             >
               Competitors
             </button>
             <button 
               className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'keywords' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
               onClick={() => setActiveTab('keywords')}
+              style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
             >
               Keywords
             </button>
             <button 
               className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'insights' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
               onClick={() => setActiveTab('insights')}
+              style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
             >
               Key Insights
             </button>
