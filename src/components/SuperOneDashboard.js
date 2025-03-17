@@ -208,3 +208,88 @@ const SuperOneDashboard = () => {
       'Potential IP challenges in fan content'
     ]
   };
+  
+  // Render the selected competitive analysis tab content
+  const renderCompetitiveTabContent = () => {
+    switch (activeCompTab) {
+      case 'market':
+        return (
+          <div>
+            <h3 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-lg mb-4">Market Position Analysis</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Market Position Scatter Plot */}
+              <div className="bg-white p-4 rounded shadow h-80">
+                <h4 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-base mb-2">Downloads vs Revenue (K)</h4>
+                <ResponsiveContainer width="100%" height="90%">
+                  <ScatterChart
+                    margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                  >
+                    <CartesianGrid />
+                    <XAxis type="number" dataKey="x" name="Downloads (K)" unit="K" />
+                    <YAxis type="number" dataKey="y" name="Revenue (K)" unit="K" />
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value) => `${value}K`} />
+                    <Scatter name="Companies" data={marketPositionData} fill="#8884d8">
+                      {marketPositionData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.name === 'Super.One Fan Battle' ? '#FF5733' : '#8884d8'} />
+                      ))}
+                    </Scatter>
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Market Share Pie Chart */}
+              <div className="bg-white p-4 rounded shadow h-80">
+                <h4 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-base mb-2">Market Share Analysis</h4>
+                <ResponsiveContainer width="100%" height="90%">
+                  <PieChart>
+                    <Pie
+                      data={marketShareData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
+                    >
+                      {marketShareData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.name === 'Super.One Fan Battle' ? '#FF5733' : COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => `${value}%`} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Competitors Table */}
+            <div className="mt-6 bg-white p-4 rounded shadow overflow-x-auto">
+              <h4 style={{ fontFamily: '"Roboto Slab", serif', fontWeight: 500 }} className="text-base mb-3">Key Competitors Overview</h4>
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 500 }}>App Name</th>
+                    <th className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 500 }}>Developer</th>
+                    <th className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 500 }}>Rating</th>
+                    <th className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 500 }}>Downloads</th>
+                    <th className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 500 }}>Revenue</th>
+                    <th className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 500 }}>Last Update</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {competitors.map((comp) => (
+                    <tr key={comp.id} className={comp.name === 'Super.One Fan Battle' ? 'bg-orange-50' : ''}>
+                      <td className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: comp.name === 'Super.One Fan Battle' ? 500 : 400 }}>{comp.name}</td>
+                      <td className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>{comp.developer}</td>
+                      <td className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>{comp.rating}</td>
+                      <td className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>{comp.downloads.toLocaleString()}</td>
+                      <td className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>${comp.revenue.toLocaleString()}</td>
+                      <td className="py-2 px-4" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>{comp.lastUpdate}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
