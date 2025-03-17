@@ -1,0 +1,182 @@
+{
+  "app_info": {
+    "ios": {
+      "app_id": 1455333818,
+      "title": "Super.One Fan Battle",
+      "subtitle": "The Ultimate Trivia Game",
+      "developer": "Super One",
+      "current_version": "3.88",
+      "last_update_date": "2025-02-19T00:00:00.000Z",
+      "release_notes": "Improved leaderboard performance for a smoother experience.\nFixed text rendering issues in certain languages.\nResolved layout and UI glitches in multiple screens.\nGeneral bug fixes and enhancements for better stability.",
+      "rating": 4.6,
+      "rating_count": 23,
+      "description": "Introducing SuperOne, the ultimate trivia battle! Prove yourself as the ultimate fan while competing for cash prizes in SuperOne's Battle Royale. Will you be the last fan standing?"
+    },
+    "android": {
+      "app_id": "com.superone",
+      "title": "SuperOne Fan Battle",
+      "developer": "SuperOne Limited",
+      "current_version": "5.2.5",
+      "last_update_date": "2025-03-07T00:00:00.000Z",
+      "previous_version": "5.2.4",
+      "previous_release_notes": "Improved leaderboard performance for a smoother experience.\nFixed text rendering issues in certain languages.\nResolved layout and UI glitches in multiple screens.\nGeneral bug fixes and enhancements for better stability.",
+      "rating": 4.4,
+      "rating_count": 822,
+      "description": "The ultimate football trivia battle - Win free prizes by answering questions"
+    }
+  },
+  "performance_metrics": {
+    "time_period": "January 30, 2025 - March 15, 2025",
+    "downloads": {
+      "total": 4028,
+      "ios": 2039,
+      "android": 1989,
+      "ios_percentage": 50.6,
+      "android_percentage": 49.4
+    },
+    "revenue": {
+      "total": 1297.04,
+      "ios": 373.00,
+      "android": 924.04,
+      "ios_percentage": 28.8,
+      "android_percentage": 71.2
+    },
+    "active_users": {
+      "average_daily": 6101,
+      "ios_growth": 7.4,
+      "android_growth": 3.2,
+      "new_users": 33800
+    },
+    "engagement": {
+      "sessions_per_user_ios": 2.25,
+      "sessions_per_user_android": 2.73
+    }
+  },
+  "updates_during_period": {
+    "ios": [
+      {
+        "version": "3.88",
+        "release_date": "2025-02-19T00:00:00.000Z",
+        "key_changes": [
+          "Improved leaderboard performance",
+          "Fixed text rendering issues",
+          "Resolved UI glitches",
+          "Stability enhancements"
+        ]
+      },
+      {
+        "version": "3.87",
+        "release_date": "2025-01-30T00:00:00.000Z",
+        "key_changes": [
+          "Added leaderboard in Game History",
+          "Revamped rewards system",
+          "Simplified signup process",
+          "Added Arabic language support",
+          "Updated wallet functionality",
+          "New visuals and UI improvements"
+        ]
+      }
+    ],
+    "android": [
+      {
+        "version": "5.2.5",
+        "release_date": "2025-03-07T00:00:00.000Z",
+        "key_changes": [
+          "Minor bug fixes"
+        ]
+      },
+      {
+        "version": "5.2.4",
+        "release_date": "2025-02-17T00:00:00.000Z",
+        "key_changes": [
+          "Improved leaderboard performance",
+          "Fixed text rendering issues",
+          "Resolved UI glitches",
+          "Stability enhancements"
+        ]
+      },
+      {
+        "version": "5.2.3",
+        "release_date": "2025-01-27T00:00:00.000Z",
+        "key_changes": [
+          "Added leaderboard and improved rewards",
+          "WhatsApp signup integration",
+          "Arabic language support",
+          "Wallet update improvements",
+          "Visual and UI enhancements",
+          "New game features"
+        ]
+      }
+    ]
+  },
+  "key_features_added": [
+    "Leaderboard functionality",
+    "Improved game rewards system",
+    "Simplified signup process",
+    "Arabic language support",
+    "Enhanced wallet functionality",
+    "Performance optimizations",
+    "WhatsApp integration (Android only)"
+  ],
+  "competitor_analysis": {
+    "similar_apps": {
+      "ios": [
+        "Trivia Star (1631799439)",
+        "QuizTime Live (1643534525)",
+        "Fan Quest Trivia (1555014581)"
+      ],
+      "android": [
+        "Trivia Star",
+        "QuizTime Live",
+        "Fan Quest Trivia"
+      ]
+    },
+    "competitive_position": {
+      "category_rank": {
+        "ios": 32,
+        "android": 28
+      },
+      "strengths": [
+        "Unique trivia battle format",
+        "Real cash prizes",
+        "Affiliate marketing system",
+        "Regular game updates",
+        "Multi-language support"
+      ],
+      "areas_for_improvement": [
+        "User retention strategies",
+        "Social features implementation",
+        "App store optimization",
+        "User acquisition cost efficiency"
+      ]
+    }
+  },
+  "market_insights": {
+    "user_demographics": {
+      "age_groups": {
+        "18-24": 32,
+        "25-34": 41,
+        "35-44": 18,
+        "45+": 9
+      },
+      "gender_split": {
+        "male": 68,
+        "female": 32
+      },
+      "top_countries": [
+        "United States",
+        "United Kingdom",
+        "Germany",
+        "Australia",
+        "Canada"
+      ]
+    },
+    "growth_opportunities": [
+      "Expansion into emerging markets",
+      "Enhanced social sharing features",
+      "Tournament-based competitions",
+      "Improved monetization strategies",
+      "Cross-promotion with sports brands"
+    ]
+  }
+}
