@@ -1,16 +1,22 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": {
+        "installCommand": "npm install --no-optional --legacy-peer-deps",
+        "buildCommand": "CI=false GENERATE_SOURCEMAP=false npm run build"
+      }
+    }
   ],
-  "buildCommand": "CI=false GENERATE_SOURCEMAP=false npm run build",
-  "installCommand": "npm install --legacy-peer-deps --no-optional",
-  "outputDirectory": "build",
-  "framework": "create-react-app",
-  "github": {
-    "silent": true
-  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
   "env": {
-    "NODE_OPTIONS": "--max_old_space_size=4096",
-    "NPM_FLAGS": "--legacy-peer-deps --no-optional"
+    "NODE_OPTIONS": "--max-old-space-size=4096"
   }
 }
