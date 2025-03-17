@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "public": true,
+  "cleanUrls": true,
+  "trailingSlash": false,
   "builds": [
     {
       "src": "package.json",
@@ -10,6 +13,13 @@
     }
   ],
   "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/test",
+      "dest": "/test.html"
+    },
     {
       "src": "/static/(.*)",
       "dest": "/static/$1"
@@ -36,7 +46,8 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/index.html",
+      "status": 200
     }
   ]
 }
