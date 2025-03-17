@@ -5,15 +5,15 @@ import RevenueForecasting from './RevenueForecasting';
 const USDRevenue = () => {
   const [activeView, setActiveView] = useState('weekly');
   
-  // Weekly revenue data
+  // Weekly revenue data with shortened labels
   const weeklyData = [
-    {week: "Week 1 (Jan 30 - Feb 5)", android: 134.58, ios: 52, total: 186.58},
-    {week: "Week 2 (Feb 6 - Feb 12)", android: 132.01, ios: 72, total: 204.01},
-    {week: "Week 3 (Feb 13 - Feb 19)", android: 124.70, ios: 40, total: 164.70},
-    {week: "Week 4 (Feb 20 - Feb 26)", android: 159.51, ios: 59, total: 218.51},
-    {week: "Week 5 (Feb 27 - Mar 5)", android: 134.99, ios: 57, total: 191.99},
-    {week: "Week 6 (Mar 6 - Mar 12)", android: 153.25, ios: 65, total: 218.25},
-    {week: "Week 7 (Mar 13 - Mar 15)", android: 85.00, ios: 28, total: 113.00}
+    {week: "W1: Jan 30-Feb 5", shortWeek: "W1", displayWeek: "Week 1", android: 134.58, ios: 52, total: 186.58},
+    {week: "W2: Feb 6-12", shortWeek: "W2", displayWeek: "Week 2", android: 132.01, ios: 72, total: 204.01},
+    {week: "W3: Feb 13-19", shortWeek: "W3", displayWeek: "Week 3", android: 124.70, ios: 40, total: 164.70},
+    {week: "W4: Feb 20-26", shortWeek: "W4", displayWeek: "Week 4", android: 159.51, ios: 59, total: 218.51},
+    {week: "W5: Feb 27-Mar 5", shortWeek: "W5", displayWeek: "Week 5", android: 134.99, ios: 57, total: 191.99},
+    {week: "W6: Mar 6-12", shortWeek: "W6", displayWeek: "Week 6", android: 153.25, ios: 65, total: 218.25},
+    {week: "W7: Mar 13-15", shortWeek: "W7", displayWeek: "Week 7", android: 85.00, ios: 28, total: 113.00}
   ];
   
   // Daily data (selected points for readability)
@@ -50,9 +50,18 @@ const USDRevenue = () => {
   // Custom tooltip
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+      // Find full week label for tooltip if available
+      let displayLabel = label;
+      if (activeView === 'weekly') {
+        const weekItem = weeklyData.find(item => item.shortWeek === label || item.week === label);
+        if (weekItem) {
+          displayLabel = weekItem.week;
+        }
+      }
+      
       return (
         <div className="bg-white p-3 rounded shadow border border-gray-200">
-          <p className="font-semibold">{label}</p>
+          <p className="font-semibold">{displayLabel}</p>
           {payload.map((entry, index) => (
             <p key={index} style={{ color: entry.stroke || entry.fill }}>
               {`${entry.name}: $${entry.value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
@@ -155,7 +164,11 @@ const USDRevenue = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={weeklyData} margin={{ top: 5, right: 30, left: 20, bottom: 30 }}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" tick={{ fontSize: 12 }} angle={-45} textAnchor="end" height={80} />
+                  <XAxis 
+                    dataKey="shortWeek" 
+                    tick={{ fontSize: 12 }} 
+                    height={50}
+                  />
                   <YAxis />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
@@ -164,6 +177,9 @@ const USDRevenue = () => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+            <p className="text-sm text-gray-600 mt-2 text-center" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
+              W1: Jan 30-Feb 5 • W2: Feb 6-12 • W3: Feb 13-19 • W4: Feb 20-26 • W5: Feb 27-Mar 5 • W6: Mar 6-12 • W7: Mar 13-15
+            </p>
           </div>
         )}
         
@@ -174,7 +190,7 @@ const USDRevenue = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={dailyData} margin={{ top: 5, right: 30, left: 20, bottom: 25 }}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
+                  <XAxis dataKey="date" tick={{ fontSize: 11 }} />
                   <YAxis />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
