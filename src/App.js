@@ -6,6 +6,7 @@ import KeyInsights from './components/KeyInsights';
 import RealGameAnalytics from './components/RealGameAnalytics';
 import SuperOneDashboard from './components/SuperOneDashboard';
 import CompetitiveAnalysis from './components/CompetitiveAnalysis';
+import Keywords from './components/Keywords';
 import Footer from './components/Footer';
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
         return <SuperOneDashboard />;
       case 'competitors':
         return <CompetitiveAnalysis />;
+      case 'keywords':
+        return <Keywords />;
       case 'insights':
         return <KeyInsights />;
       default:
@@ -69,6 +72,12 @@ function App() {
               onClick={() => setActiveTab('competitors')}
             >
               Competitors
+            </button>
+            <button 
+              className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'keywords' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+              onClick={() => setActiveTab('keywords')}
+            >
+              Keywords
             </button>
             <button 
               className={`px-4 py-2 mr-2 mb-2 rounded transition-colors ${activeTab === 'insights' ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
