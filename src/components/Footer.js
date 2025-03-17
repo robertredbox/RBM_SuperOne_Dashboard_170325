@@ -12,9 +12,27 @@ const Footer = () => {
         Data Compiled by RedBox Mobile • Last Updated: March 16, 2025
       </p>
       <div className="mt-4 flex justify-center space-x-4">
-        <a href="#" className="text-indigo-600 hover:text-indigo-800" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>Download Full Report</a>
-        <a href="#" className="text-indigo-600 hover:text-indigo-800" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>Schedule Update</a>
-        <a href="#" className="text-indigo-600 hover:text-indigo-800" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>Share Dashboard</a>
+        <button 
+          className="text-indigo-600 hover:text-indigo-800 cursor-pointer" 
+          style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
+          onClick={() => alert("Download report functionality will be implemented here")}
+        >
+          Download Full Report
+        </button>
+        <button 
+          className="text-indigo-600 hover:text-indigo-800 cursor-pointer" 
+          style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
+          onClick={() => alert("Schedule update functionality will be implemented here")}
+        >
+          Schedule Update
+        </button>
+        <button 
+          className="text-indigo-600 hover:text-indigo-800 cursor-pointer" 
+          style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
+          onClick={() => alert("Share dashboard functionality will be implemented here")}
+        >
+          Share Dashboard
+        </button>
       </div>
     </div>
   );
