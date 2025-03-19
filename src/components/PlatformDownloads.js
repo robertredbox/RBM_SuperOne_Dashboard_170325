@@ -1,78 +1,284 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import Papa from 'papaparse';
 
 const PlatformDownloads = () => {
-  // Daily data combining both iOS and Android
-  const dailyData = [
-    {date: "Jan 30", android: 81, ios: 176, total: 257},
-    {date: "Jan 31", android: 66, ios: 186, total: 252},
-    {date: "Feb 1", android: 105, ios: 86, total: 191},
-    {date: "Feb 2", android: 81, ios: 67, total: 148},
-    {date: "Feb 3", android: 73, ios: 70, total: 143},
-    {date: "Feb 4", android: 64, ios: 68, total: 132},
-    {date: "Feb 5", android: 54, ios: 53, total: 107},
-    {date: "Feb 6", android: 62, ios: 48, total: 110},
-    {date: "Feb 7", android: 46, ios: 38, total: 84},
-    {date: "Feb 8", android: 39, ios: 41, total: 80},
-    {date: "Feb 9", android: 38, ios: 43, total: 81},
-    {date: "Feb 10", android: 46, ios: 51, total: 97},
-    {date: "Feb 11", android: 37, ios: 35, total: 72},
-    {date: "Feb 12", android: 44, ios: 29, total: 73},
-    {date: "Feb 13", android: 46, ios: 40, total: 86},
-    {date: "Feb 14", android: 31, ios: 33, total: 64},
-    {date: "Feb 15", android: 36, ios: 40, total: 76},
-    {date: "Feb 16", android: 41, ios: 26, total: 67},
-    {date: "Feb 17", android: 21, ios: 27, total: 48},
-    {date: "Feb 18", android: 30, ios: 26, total: 56},
-    {date: "Feb 19", android: 16, ios: 19, total: 35},
-    {date: "Feb 20", android: 24, ios: 22, total: 46},
-    {date: "Feb 21", android: 23, ios: 29, total: 52},
-    {date: "Feb 22", android: 23, ios: 29, total: 52},
-    {date: "Feb 23", android: 40, ios: 20, total: 60},
-    {date: "Feb 24", android: 35, ios: 26, total: 61},
-    {date: "Feb 25", android: 32, ios: 14, total: 46},
-    {date: "Feb 26", android: 43, ios: 22, total: 65},
-    {date: "Feb 27", android: 44, ios: 14, total: 58},
-    {date: "Feb 28", android: 31, ios: 18, total: 49},
-    {date: "Mar 1", android: 29, ios: 17, total: 46},
-    {date: "Mar 2", android: 46, ios: 31, total: 77},
-    {date: "Mar 3", android: 58, ios: 33, total: 91},
-    {date: "Mar 4", android: 37, ios: 25, total: 62},
-    {date: "Mar 5", android: 38, ios: 28, total: 66},
-    {date: "Mar 6", android: 41, ios: 18, total: 59},
-    {date: "Mar 7", android: 39, ios: 50, total: 89},
-    {date: "Mar 8", android: 43, ios: 25, total: 68},
-    {date: "Mar 9", android: 45, ios: 43, total: 88},
-    {date: "Mar 10", android: 61, ios: 50, total: 111},
-    // Data from March 11-15 (using previous Android pattern since Android data wasn't provided)
-    {date: "Mar 11", android: 40, ios: 50, total: 90},
-    {date: "Mar 12", android: 40, ios: 49, total: 89},
-    {date: "Mar 13", android: 40, ios: 68, total: 108},
-    {date: "Mar 14", android: 40, ios: 45, total: 85},
-    {date: "Mar 15", android: 40, ios: 80, total: 120}
-  ];
+  const [timeRange, setTimeRange] = useState('30days');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Data states
+  const [dailyData, setDailyData] = useState([]);
+  const [weeklyData, setWeeklyData] = useState([]);
+  const [totals, setTotals] = useState({ android: 0, ios: 0, total: 0 });
+  
+  // Function to standardize dates across datasets
+  function standardizeDate(dateStr) {
+    let standardDate = null;
+    
+    // iOS date format M/D/YY
+    if (dateStr.includes('/')) {
+      const [month, day, yearShort] = dateStr.split('/');
+      const year = parseInt(yearShort) + 2000; // Assume 20xx
+      standardDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    } 
+    // Android date format DD MMM YYYY
+    else if (dateStr.includes(' ')) {
+      const months = {
+        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
+        'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+      };
+      
+      const [day, monthStr, year] = dateStr.split(' ');
+      if (months[monthStr]) {
+        standardDate = `${year}-${months[monthStr]}-${day.padStart(2, '0')}`;
+      }
+    }
+    
+    return standardDate;
+  }
 
-  // Platform totals
-  const totals = {
-    android: 1989, // 1789 + estimated 200 for Mar 11-15
-    ios: 2039,
-    total: 4028
+  // Function to filter data by date range
+  function filterByDays(data, days) {
+    const now = new Date();
+    const cutoffDate = new Date(now.setDate(now.getDate() - days)).toISOString().split('T')[0];
+    return data.filter(item => item.date >= cutoffDate);
+  }
+
+  // Function to calculate totals
+  function calculateTotals(data) {
+    return {
+      android: data.reduce((sum, item) => sum + (item.android || 0), 0),
+      ios: data.reduce((sum, item) => sum + (item.ios || 0), 0),
+      total: data.reduce((sum, item) => sum + (item.total || 0), 0)
+    };
+  }
+
+  // Function to aggregate data by week
+  function aggregateByWeek(data) {
+    // Function to get week of the year
+    function getWeekOfYear(dateStr) {
+      const date = new Date(dateStr);
+      const startDate = new Date(date.getFullYear(), 0, 1);
+      const days = Math.floor((date - startDate) / (24 * 60 * 60 * 1000));
+      return Math.ceil((days + startDate.getDay() + 1) / 7);
+    }
+    
+    // Group by week
+    const weekMap = new Map();
+    
+    data.forEach(item => {
+      const date = new Date(item.date);
+      const weekNum = getWeekOfYear(item.date);
+      const yearWeek = `${date.getFullYear()}-W${weekNum}`;
+      const displayWeek = `W${weekNum}`;
+      
+      if (!weekMap.has(yearWeek)) {
+        weekMap.set(yearWeek, {
+          week: `Week ${weekNum} (${date.getFullYear()})`,
+          shortWeek: displayWeek,
+          displayWeek: `Week ${weekNum}`,
+          android: 0,
+          ios: 0,
+          total: 0
+        });
+      }
+      
+      const weekData = weekMap.get(yearWeek);
+      weekData.android += item.android || 0;
+      weekData.ios += item.ios || 0;
+      weekData.total += item.total || 0;
+    });
+    
+    return Array.from(weekMap.values())
+      .sort((a, b) => {
+        // Extract year and week number for sorting
+        const [yearA, weekA] = a.week.match(/Week (\d+) \((\d+)\)/).slice(1, 3);
+        const [yearB, weekB] = b.week.match(/Week (\d+) \((\d+)\)/).slice(1, 3);
+        
+        if (yearA !== yearB) return yearA - yearB;
+        return weekA - weekB;
+      });
+  }
+
+  // Format display date from standard format
+  function formatDisplayDate(dateStr) {
+    const date = new Date(dateStr);
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
+  }
+
+  // Process iOS data from multiple files if necessary
+  async function loadIosData() {
+    try {
+      let iosData = [];
+      
+      // Try to load the combined file first
+      try {
+        const mainFile = await window.fs.readFile('ios_downloads.csv', { encoding: 'utf8' });
+        const parsed = Papa.parse(mainFile, {
+          header: true,
+          skipEmptyLines: true,
+          dynamicTyping: true
+        });
+        
+        iosData = parsed.data;
+      } catch (mainError) {
+        console.warn('Main iOS file not found, trying parts...', mainError);
+        
+        // If combined file doesn't exist, try to load parts
+        const parts = ['ios_downloads.csv', 'ios_downloads_part2.csv', 'ios_downloads_part3.csv', 
+                      'ios_downloads_part4.csv', 'ios_downloads_part5.csv', 'ios_downloads_part6.csv'];
+        
+        for (const part of parts) {
+          try {
+            const fileContent = await window.fs.readFile(part, { encoding: 'utf8' });
+            const parsed = Papa.parse(fileContent, {
+              header: true,
+              skipEmptyLines: true,
+              dynamicTyping: true
+            });
+            
+            // Add valid entries to our data array
+            iosData = [...iosData, ...parsed.data];
+          } catch (partError) {
+            console.warn(`Part file ${part} not found or invalid`, partError);
+          }
+        }
+      }
+      
+      // Process the data to keep only rows with valid date format
+      return iosData
+        .filter(row => {
+          if (!row.Name || !row["Super.One Fan Battle"]) return false;
+          const dateParts = row.Name.split('/');
+          return dateParts.length === 3;
+        })
+        .map(row => ({
+          date: row.Name,
+          downloads: typeof row["Super.One Fan Battle"] === 'number' ? row["Super.One Fan Battle"] : 0
+        }));
+      
+    } catch (err) {
+      console.error('Error loading iOS data:', err);
+      throw new Error('Failed to load iOS download data');
+    }
+  }
+
+  // Load and process data
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        
+        // Load Android data
+        const androidDataRaw = await window.fs.readFile('android_data.csv', { encoding: 'utf8' });
+        const parsedAndroidData = Papa.parse(androidDataRaw, {
+          header: true,
+          skipEmptyLines: true,
+          dynamicTyping: true
+        });
+        
+        // Process Android data
+        const androidDownloads = parsedAndroidData.data.map(row => ({
+          date: row.Date,
+          downloads: row["Store listing acquisitions: All countries / regions"] || 0
+        }));
+        
+        // Load iOS data using our specialized function
+        const iosDownloads = await loadIosData();
+        
+        // Combine the datasets
+        const dateMap = new Map();
+        
+        // Process Android downloads
+        androidDownloads.forEach(item => {
+          const standardDate = standardizeDate(item.date);
+          if (standardDate) {
+            dateMap.set(standardDate, { 
+              date: standardDate, 
+              displayDate: formatDisplayDate(standardDate),
+              android: item.downloads,
+              ios: 0,
+              total: item.downloads
+            });
+          }
+        });
+        
+        // Merge with iOS downloads
+        iosDownloads.forEach(item => {
+          const standardDate = standardizeDate(item.date);
+          if (standardDate) {
+            if (dateMap.has(standardDate)) {
+              const existing = dateMap.get(standardDate);
+              existing.ios = item.downloads;
+              existing.total = existing.android + item.downloads;
+            } else {
+              dateMap.set(standardDate, { 
+                date: standardDate, 
+                displayDate: formatDisplayDate(standardDate),
+                android: 0,
+                ios: item.downloads,
+                total: item.downloads
+              });
+            }
+          }
+        });
+        
+        // Convert to array and sort by date
+        const sortedCombinedData = Array.from(dateMap.values())
+          .sort((a, b) => a.date.localeCompare(b.date));
+        
+        // Update state based on selected time range
+        updateDataByTimeRange(sortedCombinedData, timeRange);
+        
+        setLoading(false);
+      } catch (err) {
+        console.error("Error loading data:", err);
+        setError("Failed to load download data: " + err.message);
+        setLoading(false);
+      }
+    }
+    
+    loadData();
+  }, []);
+  
+  // Update data when time range changes
+  useEffect(() => {
+    // If we already have data in dailyData, we can just filter it
+    if (dailyData.length > 0) {
+      const allData = [...dailyData]; // Clone the data
+      updateDataByTimeRange(allData, timeRange);
+    }
+  }, [timeRange]);
+  
+  // Helper function to update data based on time range
+  const updateDataByTimeRange = (allData, selectedRange) => {
+    let filteredData;
+    
+    switch (selectedRange) {
+      case '7days':
+        filteredData = filterByDays(allData, 7);
+        break;
+      case '30days':
+        filteredData = filterByDays(allData, 30);
+        break;
+      case '365days':
+      default:
+        filteredData = allData;
+        break;
+    }
+    
+    // Update states
+    setDailyData(filteredData);
+    setWeeklyData(aggregateByWeek(filteredData));
+    setTotals(calculateTotals(filteredData));
   };
-
+  
   // Calculate percentages
-  const androidPercentage = parseFloat((totals.android / totals.total * 100).toFixed(1));
-  const iosPercentage = parseFloat((totals.ios / totals.total * 100).toFixed(1));
-
-  // Weekly data for comparison with shortened labels
-  const weeklyData = [
-    {week: "Week 1 (Jan 30-Feb 5)", shortWeek: "W1", displayWeek: "Week 1", android: 524, ios: 706, total: 1230},
-    {week: "Week 2 (Feb 6-12)", shortWeek: "W2", displayWeek: "Week 2", android: 312, ios: 285, total: 597},
-    {week: "Week 3 (Feb 13-19)", shortWeek: "W3", displayWeek: "Week 3", android: 221, ios: 211, total: 432},
-    {week: "Week 4 (Feb 20-26)", shortWeek: "W4", displayWeek: "Week 4", android: 220, ios: 162, total: 382},
-    {week: "Week 5 (Feb 27-Mar 5)", shortWeek: "W5", displayWeek: "Week 5", android: 283, ios: 166, total: 449},
-    {week: "Week 6 (Mar 6-12)", shortWeek: "W6", displayWeek: "Week 6", android: 269, ios: 235, total: 504},
-    {week: "Week 7 (Mar 13-15)", shortWeek: "W7", displayWeek: "Week 7", android: 120, ios: 193, total: 313}
-  ];
+  const androidPercentage = totals.total === 0 ? 0 : parseFloat((totals.android / totals.total * 100).toFixed(1));
+  const iosPercentage = totals.total === 0 ? 0 : parseFloat((totals.ios / totals.total * 100).toFixed(1));
   
   // Custom tooltip formatter
   const CustomTooltip = ({ active, payload, label }) => {
@@ -103,6 +309,30 @@ const PlatformDownloads = () => {
     return null;
   };
 
+  if (loading) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading downloads data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-red-50 p-4 rounded-md">
+          <h3 className="text-red-800 font-medium">Error Loading Data</h3>
+          <p className="text-red-700 mt-2">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Slab:wght@500&display=swap" rel="stylesheet" />
@@ -113,8 +343,35 @@ const PlatformDownloads = () => {
           Platform Downloads
         </h2>
         <p className="text-gray-600" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
-          iOS vs. Android Downloads (Jan 30 - Mar 15, 2025)
+          iOS vs. Android Downloads
         </p>
+      </div>
+      
+      {/* Time Range Selector */}
+      <div className="mb-4">
+        <div className="flex space-x-2">
+          <button 
+            className={`px-4 py-2 rounded transition-colors ${timeRange === '7days' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
+            onClick={() => setTimeRange('7days')}
+            style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
+          >
+            Last 7 Days
+          </button>
+          <button 
+            className={`px-4 py-2 rounded transition-colors ${timeRange === '30days' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
+            onClick={() => setTimeRange('30days')}
+            style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
+          >
+            Last 30 Days
+          </button>
+          <button 
+            className={`px-4 py-2 rounded transition-colors ${timeRange === '365days' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
+            onClick={() => setTimeRange('365days')}
+            style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
+          >
+            Last 365 Days
+          </button>
+        </div>
       </div>
       
       {/* Platform Summary Cards */}
@@ -150,9 +407,9 @@ const PlatformDownloads = () => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
-                dataKey="date" 
+                dataKey="displayDate" 
                 tick={{ fontSize: 12 }} 
-                interval={4} // Show only every 5th label for better spacing
+                interval={timeRange === '7days' ? 0 : timeRange === '30days' ? 3 : 15} 
                 height={40}
               />
               <YAxis />
@@ -188,9 +445,6 @@ const PlatformDownloads = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <p className="text-xs text-gray-500 mt-2" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
-          Note: Android data for Mar 11-15 is estimated based on previous trends.
-        </p>
       </div>
       
       {/* Weekly Comparison Bar Chart */}
@@ -216,8 +470,10 @@ const PlatformDownloads = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <p className="text-sm text-gray-600 mt-3 text-center" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
-          W1: Jan 30-Feb 5 • W2: Feb 6-12 • W3: Feb 13-19 • W4: Feb 20-26 • W5: Feb 27-Mar 5 • W6: Mar 6-12 • W7: Mar 13-15
+        <p className="text-sm text-gray-600 mt-3" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
+          {timeRange === '7days' ? 'Showing data for the last 7 days' : 
+           timeRange === '30days' ? 'Showing data for the last 30 days' : 
+           'Showing data for the last 365 days'}
         </p>
       </div>
     </div>
