@@ -294,13 +294,15 @@ const PlatformDownloads = () => {
     let filteredData;
     
     switch (selectedRange) {
+      case '7days':
+        filteredData = filterByDays(data, 7);
+        break;
       case '30days':
         filteredData = filterByDays(data, 30);
         break;
       case '90days':
         filteredData = filterByDays(data, 90);
         break;
-      case 'all':
       default:
         // Use all data for "All Data" option
         filteredData = [...data];
@@ -383,6 +385,13 @@ const PlatformDownloads = () => {
       <div className="mb-4">
         <div className="flex space-x-2">
           <button 
+            className={`px-4 py-2 rounded transition-colors ${timeRange === '7days' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
+            onClick={() => setTimeRange('7days')}
+            style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
+          >
+            Last 7 Days
+          </button>
+          <button 
             className={`px-4 py-2 rounded transition-colors ${timeRange === '30days' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
             onClick={() => setTimeRange('30days')}
             style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
@@ -395,13 +404,6 @@ const PlatformDownloads = () => {
             style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
           >
             Last 90 Days
-          </button>
-          <button 
-            className={`px-4 py-2 rounded transition-colors ${timeRange === 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
-            onClick={() => setTimeRange('all')}
-            style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
-          >
-            All Data
           </button>
         </div>
       </div>
@@ -441,7 +443,7 @@ const PlatformDownloads = () => {
               <XAxis 
                 dataKey="displayDate" 
                 tick={{ fontSize: 12 }} 
-                interval={timeRange === '30days' ? 3 : timeRange === '90days' ? 7 : 15} 
+                interval={timeRange === '7days' ? 0 : timeRange === '30days' ? 3 : 7} 
                 height={40}
               />
               <YAxis />
@@ -503,9 +505,9 @@ const PlatformDownloads = () => {
           </ResponsiveContainer>
         </div>
         <p className="text-sm text-gray-600 mt-3" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
-          {timeRange === '30days' ? 'Showing data for the last 30 days' : 
-           timeRange === '90days' ? 'Showing data for the last 90 days' : 
-           'Showing all available data (Mar 2024 - Mar 2025)'}
+          {timeRange === '7days' ? 'Showing data for the last 7 days' : 
+           timeRange === '30days' ? 'Showing data for the last 30 days' : 
+           'Showing data for the last 90 days'}
         </p>
       </div>
     </div>
