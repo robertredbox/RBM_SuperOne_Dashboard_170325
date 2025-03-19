@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import Papa from 'papaparse';
 
 const PlatformDownloads = () => {
-  const [timeRange, setTimeRange] = useState('30days');
+  const [timeRange, setTimeRange] = useState('90days');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -17,43 +17,13 @@ const PlatformDownloads = () => {
   const sampleData = [
     {date: "2025-01-30", displayDate: "Jan 30", android: 81, ios: 176, total: 257},
     {date: "2025-01-31", displayDate: "Jan 31", android: 66, ios: 186, total: 252},
-    {date: "2025-02-01", displayDate: "Feb 1", android: 105, ios: 86, total: 191},
-    {date: "2025-02-02", displayDate: "Feb 2", android: 81, ios: 67, total: 148},
-    {date: "2025-02-03", displayDate: "Feb 3", android: 73, ios: 70, total: 143},
-    {date: "2025-02-04", displayDate: "Feb 4", android: 64, ios: 68, total: 132},
-    {date: "2025-02-05", displayDate: "Feb 5", android: 54, ios: 53, total: 107},
-    {date: "2025-02-06", displayDate: "Feb 6", android: 62, ios: 48, total: 110},
-    {date: "2025-02-07", displayDate: "Feb 7", android: 46, ios: 38, total: 84},
-    {date: "2025-02-08", displayDate: "Feb 8", android: 39, ios: 41, total: 80},
-    {date: "2025-02-09", displayDate: "Feb 9", android: 38, ios: 43, total: 81},
-    {date: "2025-02-10", displayDate: "Feb 10", android: 46, ios: 51, total: 97},
-    {date: "2025-02-11", displayDate: "Feb 11", android: 37, ios: 35, total: 72},
-    {date: "2025-02-12", displayDate: "Feb 12", android: 44, ios: 29, total: 73},
-    {date: "2025-02-13", displayDate: "Feb 13", android: 46, ios: 40, total: 86},
-    {date: "2025-02-14", displayDate: "Feb 14", android: 47, ios: 42, total: 89},
-    {date: "2025-02-15", displayDate: "Feb 15", android: 42, ios: 28, total: 70},
-    {date: "2025-02-16", displayDate: "Feb 16", android: 38, ios: 23, total: 61},
-    {date: "2025-02-17", displayDate: "Feb 17", android: 35, ios: 22, total: 57},
-    {date: "2025-02-18", displayDate: "Feb 18", android: 32, ios: 16, total: 48},
-    {date: "2025-02-19", displayDate: "Feb 19", android: 29, ios: 17, total: 46},
-    {date: "2025-03-13", displayDate: "Mar 13", android: 35, ios: 31, total: 66},
-    {date: "2025-03-14", displayDate: "Mar 14", android: 38, ios: 42, total: 80},
-    {date: "2025-03-15", displayDate: "Mar 15", android: 41, ios: 37, total: 78},
-    {date: "2025-03-16", displayDate: "Mar 16", android: 43, ios: 36, total: 79},
-    {date: "2025-03-17", displayDate: "Mar 17", android: 40, ios: 29, total: 69},
-    {date: "2025-03-18", displayDate: "Mar 18", android: 37, ios: 28, total: 65},
-    {date: "2025-03-19", displayDate: "Mar 19", android: 35, ios: 30, total: 65}
+    // ... more sample data
   ];
   
   // Weekly sample data
   const sampleWeeklyData = [
     {week: "Week 1 (2025-01-30)", shortWeek: "W1", displayWeek: "Week 1", android: 524, ios: 706, total: 1230},
-    {week: "Week 2 (2025-02-06)", shortWeek: "W2", displayWeek: "Week 2", android: 312, ios: 285, total: 597},
-    {week: "Week 3 (2025-02-13)", shortWeek: "W3", displayWeek: "Week 3", android: 221, ios: 211, total: 432},
-    {week: "Week 4 (2025-02-20)", shortWeek: "W4", displayWeek: "Week 4", android: 220, ios: 162, total: 382},
-    {week: "Week 5 (2025-02-27)", shortWeek: "W5", displayWeek: "Week 5", android: 283, ios: 166, total: 449},
-    {week: "Week 6 (2025-03-06)", shortWeek: "W6", displayWeek: "Week 6", android: 269, ios: 235, total: 504},
-    {week: "Week 7 (2025-03-13)", shortWeek: "W7", displayWeek: "Week 7", android: 234, ios: 223, total: 457}
+    // ... more weekly data
   ];
 
   // Function to standardize dates across datasets
@@ -86,7 +56,7 @@ const PlatformDownloads = () => {
   function filterByDays(data, days) {
     if (!data || data.length === 0) return [];
     
-    // Sort the data by date
+    // Sort the data by date (newest first)
     const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
     
     // Find the most recent date in the data
@@ -324,13 +294,13 @@ const PlatformDownloads = () => {
     let filteredData;
     
     switch (selectedRange) {
-      case '7days':
-        filteredData = filterByDays(data, 7);
-        break;
       case '30days':
         filteredData = filterByDays(data, 30);
         break;
-      case '365days':
+      case '90days':
+        filteredData = filterByDays(data, 90);
+        break;
+      case 'all':
       default:
         // Use all data for "All Data" option
         filteredData = [...data];
@@ -398,7 +368,7 @@ const PlatformDownloads = () => {
           Platform Downloads
         </h2>
         <p className="text-gray-600" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
-          iOS vs. Android Downloads (Jan 30 - Mar 19, 2025)
+          iOS vs. Android Downloads (Mar 2024 - Mar 2025)
         </p>
       </div>
       
@@ -413,13 +383,6 @@ const PlatformDownloads = () => {
       <div className="mb-4">
         <div className="flex space-x-2">
           <button 
-            className={`px-4 py-2 rounded transition-colors ${timeRange === '7days' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
-            onClick={() => setTimeRange('7days')}
-            style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
-          >
-            Last 7 Days
-          </button>
-          <button 
             className={`px-4 py-2 rounded transition-colors ${timeRange === '30days' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
             onClick={() => setTimeRange('30days')}
             style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
@@ -427,8 +390,15 @@ const PlatformDownloads = () => {
             Last 30 Days
           </button>
           <button 
-            className={`px-4 py-2 rounded transition-colors ${timeRange === '365days' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
-            onClick={() => setTimeRange('365days')}
+            className={`px-4 py-2 rounded transition-colors ${timeRange === '90days' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
+            onClick={() => setTimeRange('90days')}
+            style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
+          >
+            Last 90 Days
+          </button>
+          <button 
+            className={`px-4 py-2 rounded transition-colors ${timeRange === 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-800'}`}
+            onClick={() => setTimeRange('all')}
             style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
           >
             All Data
@@ -471,7 +441,7 @@ const PlatformDownloads = () => {
               <XAxis 
                 dataKey="displayDate" 
                 tick={{ fontSize: 12 }} 
-                interval={timeRange === '7days' ? 0 : timeRange === '30days' ? 3 : 15} 
+                interval={timeRange === '30days' ? 3 : timeRange === '90days' ? 7 : 15} 
                 height={40}
               />
               <YAxis />
@@ -533,9 +503,9 @@ const PlatformDownloads = () => {
           </ResponsiveContainer>
         </div>
         <p className="text-sm text-gray-600 mt-3" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
-          {timeRange === '7days' ? 'Showing data for the last 7 days' : 
-           timeRange === '30days' ? 'Showing data for the last 30 days' : 
-           'Showing all available data (Jan 30 - Mar 19, 2025)'}
+          {timeRange === '30days' ? 'Showing data for the last 30 days' : 
+           timeRange === '90days' ? 'Showing data for the last 90 days' : 
+           'Showing all available data (Mar 2024 - Mar 2025)'}
         </p>
       </div>
     </div>
