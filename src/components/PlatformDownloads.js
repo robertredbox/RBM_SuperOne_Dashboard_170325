@@ -8,38 +8,11 @@ const PlatformDownloads = () => {
   const [error, setError] = useState(null);
   
   // Data states
-  const [allDailyData, setAllDailyData] = useState([]); // Store ALL data
-  const [dailyData, setDailyData] = useState([]); // Store filtered data to display
-  const [allWeeklyData, setAllWeeklyData] = useState([]); // Store ALL weekly data
-  const [weeklyData, setWeeklyData] = useState([]); // Store filtered weekly data
+  const [allDailyData, setAllDailyData] = useState([]); 
+  const [dailyData, setDailyData] = useState([]); 
+  const [allWeeklyData, setAllWeeklyData] = useState([]);
+  const [weeklyData, setWeeklyData] = useState([]);
   const [totals, setTotals] = useState({ android: 0, ios: 0, total: 0 });
-  
-  // Sample data to use if loading fails
-  const sampleData = [
-    {date: "2025-01-30", displayDate: "Jan 30", android: 81, ios: 176, total: 257},
-    {date: "2025-01-31", displayDate: "Jan 31", android: 66, ios: 186, total: 252},
-    {date: "2025-02-01", displayDate: "Feb 1", android: 55, ios: 162, total: 217},
-    {date: "2025-02-02", displayDate: "Feb 2", android: 64, ios: 154, total: 218},
-    {date: "2025-02-03", displayDate: "Feb 3", android: 73, ios: 183, total: 256},
-    {date: "2025-02-04", displayDate: "Feb 4", android: 62, ios: 172, total: 234},
-    {date: "2025-02-05", displayDate: "Feb 5", android: 59, ios: 169, total: 228},
-    {date: "2025-02-06", displayDate: "Feb 6", android: 70, ios: 150, total: 220},
-    {date: "2025-02-07", displayDate: "Feb 7", android: 67, ios: 160, total: 227},
-    {date: "2025-02-08", displayDate: "Feb 8", android: 58, ios: 147, total: 205},
-    {date: "2025-02-09", displayDate: "Feb 9", android: 69, ios: 135, total: 204},
-    {date: "2025-02-10", displayDate: "Feb 10", android: 71, ios: 145, total: 216}
-  ];
-  
-  // Weekly sample data
-  const sampleWeeklyData = [
-    {week: "Week 1 (2025-01-30)", shortWeek: "W1", displayWeek: "Week 1", android: 524, ios: 706, total: 1230, startDate: "2025-01-30"},
-    {week: "Week 2 (2025-02-06)", shortWeek: "W2", displayWeek: "Week 2", android: 489, ios: 668, total: 1157, startDate: "2025-02-06"},
-    {week: "Week 3 (2025-02-13)", shortWeek: "W3", displayWeek: "Week 3", android: 502, ios: 652, total: 1154, startDate: "2025-02-13"},
-    {week: "Week 4 (2025-02-20)", shortWeek: "W4", displayWeek: "Week 4", android: 512, ios: 635, total: 1147, startDate: "2025-02-20"},
-    {week: "Week 5 (2025-02-27)", shortWeek: "W5", displayWeek: "Week 5", android: 478, ios: 621, total: 1099, startDate: "2025-02-27"},
-    {week: "Week 6 (2025-03-06)", shortWeek: "W6", displayWeek: "Week 6", android: 511, ios: 614, total: 1125, startDate: "2025-03-06"},
-    {week: "Week 7 (2025-03-13)", shortWeek: "W7", displayWeek: "Week 7", android: 525, ios: 630, total: 1155, startDate: "2025-03-13"}
-  ];
 
   // Helper to convert different date formats to standard YYYY-MM-DD
   function standardizeDate(dateStr) {
@@ -67,50 +40,34 @@ const PlatformDownloads = () => {
     return standardDate;
   }
 
-  // Function to filter data by date range - FIXED VERSION
+  // Function to filter data by date range
   function filterByDays(data, days) {
     if (!data || data.length === 0) return [];
     
-    // First ensure all data is sorted by date (newest to oldest)
+    // Sort by date (newest first)
     const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
     
-    // Set March 17, 2025 as our end reference date
+    // Reference date (March 17, 2025)
     const endDate = new Date('2025-03-17');
     
-    // Calculate the cutoff date
+    // Calculate cutoff date
     const cutoffDate = new Date(endDate);
-    cutoffDate.setDate(cutoffDate.getDate() - days);
+    cutoffDate.setDate(cutoffDate.getDate() - days + 1); // +1 to include the end date
     
-    // Convert to string format for comparison
     const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
     const endDateStr = endDate.toISOString().split('T')[0];
     
-    // Filter data to include only dates within the range
-    console.log(`Filtering from ${cutoffDateStr} to ${endDateStr} (${days} days)`);
-    
-    return data.filter(item => {
+    // Filter data within range
+    return sortedData.filter(item => {
       return item.date >= cutoffDateStr && item.date <= endDateStr;
     });
   }
 
-  // Function to calculate totals for a dataset
-  function calculateTotals(data) {
-    if (!data || data.length === 0) {
-      return { android: 0, ios: 0, total: 0 };
-    }
-    
-    return {
-      android: Math.round(data.reduce((sum, item) => sum + (item.android || 0), 0)),
-      ios: Math.round(data.reduce((sum, item) => sum + (item.ios || 0), 0)),
-      total: Math.round(data.reduce((sum, item) => sum + (item.total || 0), 0))
-    };
-  }
-  
   // Generate weekly data from daily data
   function generateWeeklyData(dailyData) {
     if (!dailyData || dailyData.length === 0) return [];
     
-    // Sort data by date (oldest first)
+    // Sort by date (oldest first)
     const sortedData = [...dailyData].sort((a, b) => new Date(a.date) - new Date(b.date));
     
     // Find the first date
@@ -176,22 +133,20 @@ const PlatformDownloads = () => {
     return weeklyData;
   }
 
-  // Function to filter weekly data based on a cutoff date
+  // Function to filter weekly data based on time range
   function filterWeeklyData(weeklyData, days) {
     if (!weeklyData || weeklyData.length === 0) return [];
     
-    // Set reference date
+    // Reference date (March 17, 2025)
     const endDate = new Date('2025-03-17');
-    
-    // Calculate cutoff date
     const cutoffDate = new Date(endDate);
     cutoffDate.setDate(cutoffDate.getDate() - days);
     const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
     
-    // Filter weekly data where start date is within range
-    return weeklyData.filter(week => {
-      return week.startDate >= cutoffDateStr;
-    });
+    // Filter weekly data by start date
+    return weeklyData
+      .filter(week => new Date(week.startDate) >= cutoffDate)
+      .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
   }
 
   // Format display date from standard format
@@ -202,159 +157,177 @@ const PlatformDownloads = () => {
     return `${month} ${day}`;
   }
 
+  // Calculate totals for a dataset
+  function calculateTotals(data) {
+    return {
+      android: Math.round(data.reduce((sum, item) => sum + (item.android || 0), 0)),
+      ios: Math.round(data.reduce((sum, item) => sum + (item.ios || 0), 0)),
+      total: Math.round(data.reduce((sum, item) => sum + (item.total || 0), 0))
+    };
+  }
+
   // Load and process data
   useEffect(() => {
     async function loadData() {
       try {
         setLoading(true);
         
+        // Process the iOS CSV data
+        let iosDownloads = [];
         try {
-          // Check if file system API is available
-          if (typeof window.fs !== 'undefined' && typeof window.fs.readFile === 'function') {
-            
-            // Load Android data
-            let androidDownloads = [];
-            try {
-              const androidDataRaw = await window.fs.readFile('android_data_v2.csv', { encoding: 'utf8' });
-              console.log("Successfully loaded Android data");
-              
-              const parsedAndroidData = Papa.parse(androidDataRaw, {
-                header: true,
-                skipEmptyLines: true,
-                dynamicTyping: true
-              });
-              
-              // Process Android data
-              androidDownloads = parsedAndroidData.data
-                .filter(row => row.Date && row["Store listing acquisitions: All countries / regions"] !== undefined)
-                .map(row => ({
-                  date: row.Date,
-                  downloads: row["Store listing acquisitions: All countries / regions"] || 0
-                }));
-              
-              console.log(`Processed ${androidDownloads.length} Android data points`);
-            } catch (androidError) {
-              console.error("Error loading Android data:", androidError);
-              androidDownloads = [];
-            }
-            
-            // Load iOS data
-            let iosDownloads = [];
-            try {
-              const iosDataRaw = await window.fs.readFile('superone ios countries downloads.csv', { encoding: 'utf8' });
-              console.log("Successfully loaded iOS data");
-              
-              const iosLines = iosDataRaw.split('\n');
-              const iosDataLines = iosLines.slice(5); // Data starts from line 6
-              
-              // Process iOS data with country columns
-              iosDataLines.forEach(line => {
-                const columns = line.split(',');
-                if (columns.length < 2 || !columns[0].includes('/')) return;
-                
-                const dateStr = columns[0]; // Format: MM/DD/YY
-                
-                // Sum all country downloads (columns 1 and onward)
-                let totalDownloads = 0;
-                for (let i = 1; i < columns.length; i++) {
-                  totalDownloads += parseFloat(columns[i]) || 0;
-                }
-                
-                iosDownloads.push({
-                  date: dateStr,
-                  downloads: totalDownloads
-                });
-              });
-              
-              console.log(`Processed ${iosDownloads.length} iOS data points`);
-            } catch (iosError) {
-              console.error("Error loading iOS data:", iosError);
-              iosDownloads = [];
-            }
-            
-            // Combine datasets with standardized dates
-            const dateMap = new Map();
-            
-            // Process Android downloads
-            androidDownloads.forEach(item => {
-              const standardDate = standardizeDate(item.date);
-              if (standardDate) {
-                dateMap.set(standardDate, { 
-                  date: standardDate, 
-                  displayDate: formatDisplayDate(standardDate),
-                  android: item.downloads,
-                  ios: 0,
-                  total: item.downloads
-                });
-              }
-            });
-            
-            // Merge with iOS downloads
-            iosDownloads.forEach(item => {
-              const standardDate = standardizeDate(item.date);
-              if (standardDate) {
-                if (dateMap.has(standardDate)) {
-                  const existing = dateMap.get(standardDate);
-                  existing.ios = item.downloads;
-                  existing.total = existing.android + item.downloads;
-                } else {
-                  dateMap.set(standardDate, { 
-                    date: standardDate, 
-                    displayDate: formatDisplayDate(standardDate),
-                    android: 0,
-                    ios: item.downloads,
-                    total: item.downloads
-                  });
-                }
-              }
-            });
-            
-            // Convert to array and sort by date
-            let combinedData = Array.from(dateMap.values());
-            
-            // Handle empty data case
-            if (combinedData.length === 0) {
-              console.warn("No data found in files, using sample data");
-              combinedData = sampleData;
-            } else {
-              console.log(`Generated combined dataset with ${combinedData.length} entries`);
-            }
-            
-            // Sort by date
-            combinedData.sort((a, b) => new Date(a.date) - new Date(b.date));
-            
-            // Store all data
-            setAllDailyData(combinedData);
-            
-            // Generate weekly data
-            const generatedWeeklyData = generateWeeklyData(combinedData);
-            setAllWeeklyData(generatedWeeklyData);
-            
-            // Initial filter based on selected time range
-            updateDataByTimeRange(combinedData, generatedWeeklyData, timeRange);
-            
-          } else {
-            throw new Error('File system API not available');
-          }
-        } catch (fileError) {
-          console.warn('Error processing data, using sample data:', fileError);
-          setError(`Unable to process data files: ${fileError.message}. Using sample data instead.`);
+          const iosDataRaw = await window.fs.readFile('superone ios countries downloads.csv', { encoding: 'utf8' });
+          const iosLines = iosDataRaw.split('\n');
+          const iosHeaderLine = iosLines[4]; // The 5th line has the actual headers
+          const iosDataLines = iosLines.slice(5); // Data starts from line 6
           
-          // Use sample data
-          setAllDailyData(sampleData);
-          setAllWeeklyData(sampleWeeklyData);
-          updateDataByTimeRange(sampleData, sampleWeeklyData, timeRange);
+          // Process iOS data with country columns
+          iosDataLines.forEach(line => {
+            const columns = line.split(',');
+            if (columns.length < 2 || !columns[0].includes('/')) return;
+            
+            const dateStr = columns[0]; // Format: MM/DD/YY
+            
+            // Sum all country downloads (columns 1 and onward)
+            let totalDownloads = 0;
+            for (let i = 1; i < columns.length; i++) {
+              totalDownloads += parseFloat(columns[i]) || 0;
+            }
+            
+            iosDownloads.push({
+              date: dateStr,
+              downloads: totalDownloads
+            });
+          });
+        } catch (iosError) {
+          console.error("Error loading iOS data:", iosError);
+          iosDownloads = [];
         }
         
-        setLoading(false);
-      } catch (err) {
-        console.error("Error in data loading:", err);
-        setError("Unable to load download data. Using sample data instead.");
+        // Process the Android CSV data
+        let androidDownloads = [];
+        try {
+          const androidDataRaw = await window.fs.readFile('android_data_v2.csv', { encoding: 'utf8' });
+          const androidLines = androidDataRaw.split('\n');
+          const androidHeader = androidLines[0];
+          const androidDataLines = androidLines.slice(1);
+          
+          androidDataLines.forEach(line => {
+            if (!line.trim()) return; // Skip empty lines
+            
+            const [dateStr, downloadsStr] = line.split(',');
+            const downloads = parseInt(downloadsStr) || 0;
+            
+            androidDownloads.push({
+              date: dateStr,
+              downloads: downloads
+            });
+          });
+        } catch (androidError) {
+          console.error("Error loading Android data:", androidError);
+          androidDownloads = [];
+        }
         
-        // Use sample data
-        setAllDailyData(sampleData);
-        setAllWeeklyData(sampleWeeklyData);
-        updateDataByTimeRange(sampleData, sampleWeeklyData, timeRange);
+        // If both datasets are empty, show error and use sample data
+        if (iosDownloads.length === 0 && androidDownloads.length === 0) {
+          setError("Could not load CSV data. Please check file formats.");
+          throw new Error("No data available from CSV files");
+        }
+        
+        // Combine the datasets
+        const dateMap = new Map();
+        
+        // Process Android downloads
+        androidDownloads.forEach(item => {
+          const standardDate = standardizeDate(item.date);
+          if (standardDate) {
+            dateMap.set(standardDate, { 
+              date: standardDate, 
+              displayDate: formatDisplayDate(standardDate),
+              android: item.downloads,
+              ios: 0,
+              total: item.downloads
+            });
+          }
+        });
+        
+        // Merge with iOS downloads
+        iosDownloads.forEach(item => {
+          const standardDate = standardizeDate(item.date);
+          if (standardDate) {
+            if (dateMap.has(standardDate)) {
+              const existing = dateMap.get(standardDate);
+              existing.ios = item.downloads;
+              existing.total = existing.android + item.downloads;
+            } else {
+              dateMap.set(standardDate, { 
+                date: standardDate, 
+                displayDate: formatDisplayDate(standardDate),
+                android: 0,
+                ios: item.downloads,
+                total: item.downloads
+              });
+            }
+          }
+        });
+        
+        // Convert to array and sort by date
+        const combinedData = Array.from(dateMap.values())
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Store all data
+        setAllDailyData(combinedData);
+        
+        // Generate weekly data
+        const generatedWeeklyData = generateWeeklyData(combinedData);
+        setAllWeeklyData(generatedWeeklyData);
+        
+        // Filter data based on selected time range
+        updateDataByTimeRange(combinedData, generatedWeeklyData, timeRange);
+        
+        setLoading(false);
+        
+      } catch (err) {
+        console.error("Error processing data:", err);
+        
+        // Create fallback data similar to the CSV data structure
+        const fallbackData = [];
+        const endDate = new Date('2025-03-17');
+        
+        // Generate 90 days of reasonable dummy data
+        for (let i = 0; i < 90; i++) {
+          const currentDate = new Date(endDate);
+          currentDate.setDate(currentDate.getDate() - i);
+          
+          const dateStr = currentDate.toISOString().split('T')[0];
+          const displayDateStr = formatDisplayDate(dateStr);
+          
+          // Generate somewhat realistic values
+          const androidValue = Math.floor(Math.random() * 10) + 20; // 20-29
+          const iosValue = Math.floor(Math.random() * 15) + 45;     // 45-59
+          
+          fallbackData.push({
+            date: dateStr,
+            displayDate: displayDateStr,
+            android: androidValue,
+            ios: iosValue,
+            total: androidValue + iosValue
+          });
+        }
+        
+        // Sort by date (oldest first)
+        fallbackData.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Store fallback data
+        setAllDailyData(fallbackData);
+        
+        // Generate weekly data
+        const fallbackWeeklyData = generateWeeklyData(fallbackData);
+        setAllWeeklyData(fallbackWeeklyData);
+        
+        // Filter based on selected time range
+        updateDataByTimeRange(fallbackData, fallbackWeeklyData, timeRange);
+        
+        setError("Unable to load data from CSV files. Using generated data instead.");
         setLoading(false);
       }
     }
@@ -362,7 +335,7 @@ const PlatformDownloads = () => {
     loadData();
   }, []);
   
-  // Update displayed data when time range changes
+  // Update data when time range changes
   useEffect(() => {
     if (allDailyData.length > 0 && allWeeklyData.length > 0) {
       updateDataByTimeRange(allDailyData, allWeeklyData, timeRange);
@@ -373,8 +346,6 @@ const PlatformDownloads = () => {
   const updateDataByTimeRange = (dailyDataSource, weeklyDataSource, selectedRange) => {
     let filteredDailyData = [];
     let filteredWeeklyData = [];
-    
-    console.log(`Updating data for time range: ${selectedRange}`);
     
     switch (selectedRange) {
       case '7days':
@@ -396,16 +367,12 @@ const PlatformDownloads = () => {
         break;
     }
     
-    // Log filtering results
-    console.log(`Filtered to ${filteredDailyData.length} daily data points and ${filteredWeeklyData.length} weekly data points`);
-    
-    // Update data states
+    // Update states
     setDailyData(filteredDailyData);
     setWeeklyData(filteredWeeklyData);
     
     // Calculate and update totals
     const calculatedTotals = calculateTotals(filteredDailyData);
-    console.log("Calculated totals:", calculatedTotals);
     setTotals(calculatedTotals);
   };
   
@@ -413,7 +380,7 @@ const PlatformDownloads = () => {
   const androidPercentage = totals.total === 0 ? 0 : parseFloat((totals.android / totals.total * 100).toFixed(1));
   const iosPercentage = totals.total === 0 ? 0 : parseFloat((totals.ios / totals.total * 100).toFixed(1));
   
-  // Custom tooltip component for charts
+  // Custom tooltip formatter
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       // Find full week label for tooltip if weeklyData includes the label
@@ -442,7 +409,6 @@ const PlatformDownloads = () => {
     return null;
   };
 
-  // Show loading state
   if (loading) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md">
