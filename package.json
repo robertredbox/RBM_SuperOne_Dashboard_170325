@@ -20,6 +20,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prebuild": "chmod +x ./combine_ios_data.sh && ./combine_ios_data.sh",
     "build": "CI=false GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
