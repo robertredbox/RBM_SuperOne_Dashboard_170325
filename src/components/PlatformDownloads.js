@@ -8,7 +8,8 @@ const PlatformDownloads = () => {
   const [error, setError] = useState(null);
   
   // Data states
-  const [dailyData, setDailyData] = useState([]);
+  const [allDailyData, setAllDailyData] = useState([]); // Store ALL data
+  const [dailyData, setDailyData] = useState([]); // Store filtered data to display
   const [weeklyData, setWeeklyData] = useState([]);
   const [totals, setTotals] = useState({ android: 0, ios: 0, total: 0 });
   
@@ -28,7 +29,20 @@ const PlatformDownloads = () => {
     {date: "2025-02-10", displayDate: "Feb 10", android: 46, ios: 51, total: 97},
     {date: "2025-02-11", displayDate: "Feb 11", android: 37, ios: 35, total: 72},
     {date: "2025-02-12", displayDate: "Feb 12", android: 44, ios: 29, total: 73},
-    {date: "2025-02-13", displayDate: "Feb 13", android: 46, ios: 40, total: 86}
+    {date: "2025-02-13", displayDate: "Feb 13", android: 46, ios: 40, total: 86},
+    {date: "2025-02-14", displayDate: "Feb 14", android: 47, ios: 42, total: 89},
+    {date: "2025-02-15", displayDate: "Feb 15", android: 42, ios: 28, total: 70},
+    {date: "2025-02-16", displayDate: "Feb 16", android: 38, ios: 23, total: 61},
+    {date: "2025-02-17", displayDate: "Feb 17", android: 35, ios: 22, total: 57},
+    {date: "2025-02-18", displayDate: "Feb 18", android: 32, ios: 16, total: 48},
+    {date: "2025-02-19", displayDate: "Feb 19", android: 29, ios: 17, total: 46},
+    {date: "2025-03-13", displayDate: "Mar 13", android: 35, ios: 31, total: 66},
+    {date: "2025-03-14", displayDate: "Mar 14", android: 38, ios: 42, total: 80},
+    {date: "2025-03-15", displayDate: "Mar 15", android: 41, ios: 37, total: 78},
+    {date: "2025-03-16", displayDate: "Mar 16", android: 43, ios: 36, total: 79},
+    {date: "2025-03-17", displayDate: "Mar 17", android: 40, ios: 29, total: 69},
+    {date: "2025-03-18", displayDate: "Mar 18", android: 37, ios: 28, total: 65},
+    {date: "2025-03-19", displayDate: "Mar 19", android: 35, ios: 30, total: 65}
   ];
   
   // Weekly sample data
@@ -39,7 +53,7 @@ const PlatformDownloads = () => {
     {week: "Week 4 (2025-02-20)", shortWeek: "W4", displayWeek: "Week 4", android: 220, ios: 162, total: 382},
     {week: "Week 5 (2025-02-27)", shortWeek: "W5", displayWeek: "Week 5", android: 283, ios: 166, total: 449},
     {week: "Week 6 (2025-03-06)", shortWeek: "W6", displayWeek: "Week 6", android: 269, ios: 235, total: 504},
-    {week: "Week 7 (2025-03-13)", shortWeek: "W7", displayWeek: "Week 7", android: 120, ios: 193, total: 313}
+    {week: "Week 7 (2025-03-13)", shortWeek: "W7", displayWeek: "Week 7", android: 234, ios: 223, total: 457}
   ];
 
   // Function to standardize dates across datasets
@@ -68,19 +82,22 @@ const PlatformDownloads = () => {
     return standardDate;
   }
 
-  // Function to filter data by date range
+  // Fixed function to filter data by date range
   function filterByDays(data, days) {
     if (!data || data.length === 0) return [];
     
-    // Find the latest date in the data
-    const dates = data.map(item => new Date(item.date));
-    const maxDate = new Date(Math.max.apply(null, dates));
+    // Sort the data by date
+    const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
     
-    // Calculate cutoff date based on the latest date
-    const cutoffDate = new Date(maxDate);
+    // Find the most recent date in the data
+    const latestDate = new Date(sortedData[0].date);
+    
+    // Calculate the cutoff date based on the latest date
+    const cutoffDate = new Date(latestDate);
     cutoffDate.setDate(cutoffDate.getDate() - days);
     const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
     
+    // Filter the data to include only dates within the range
     return data.filter(item => item.date >= cutoffDateStr);
   }
 
@@ -249,19 +266,24 @@ const PlatformDownloads = () => {
             const sortedCombinedData = Array.from(dateMap.values())
               .sort((a, b) => a.date.localeCompare(b.date));
             
+            // Store all data
+            setAllDailyData(sortedCombinedData);
+            
             // Generate weekly data
             const generatedWeeklyData = generateWeeklyData(sortedCombinedData);
             setWeeklyData(generatedWeeklyData);
             
-            // Update state based on selected time range
+            // Filter data based on selected time range
             updateDataByTimeRange(sortedCombinedData, timeRange);
           } else {
             // If window.fs is not available, throw an error to use sample data
             throw new Error('File system API not available');
           }
         } catch (fileError) {
-          // If file loading fails, use sample data
           console.warn('Error loading data from files, using sample data:', fileError);
+          // Store all sample data
+          setAllDailyData(sampleData);
+          // Filter based on selected time range
           updateDataByTimeRange(sampleData, timeRange);
           setWeeklyData(sampleWeeklyData);
         }
@@ -270,6 +292,9 @@ const PlatformDownloads = () => {
       } catch (err) {
         console.error("Error loading data:", err);
         setError("Unable to load download data. Using sample data instead.");
+        // Store all sample data
+        setAllDailyData(sampleData);
+        // Filter based on selected time range
         updateDataByTimeRange(sampleData, timeRange);
         setWeeklyData(sampleWeeklyData);
         setLoading(false);
@@ -281,12 +306,10 @@ const PlatformDownloads = () => {
   
   // Update data when time range changes
   useEffect(() => {
-    // If we already have data in dailyData, we can just filter it
-    if (dailyData.length > 0) {
-      const allData = [...dailyData]; // Clone the data
-      updateDataByTimeRange(allData, timeRange);
+    if (allDailyData.length > 0) {
+      updateDataByTimeRange(allDailyData, timeRange);
     }
-  }, [timeRange]);
+  }, [timeRange, allDailyData]);
   
   // Format display date from standard format
   function formatDisplayDate(dateStr) {
@@ -297,19 +320,20 @@ const PlatformDownloads = () => {
   }
   
   // Helper function to update data based on time range
-  const updateDataByTimeRange = (allData, selectedRange) => {
+  const updateDataByTimeRange = (data, selectedRange) => {
     let filteredData;
     
     switch (selectedRange) {
       case '7days':
-        filteredData = filterByDays(allData, 7);
+        filteredData = filterByDays(data, 7);
         break;
       case '30days':
-        filteredData = filterByDays(allData, 30);
+        filteredData = filterByDays(data, 30);
         break;
       case '365days':
       default:
-        filteredData = allData;
+        // Use all data for "All Data" option
+        filteredData = [...data];
         break;
     }
     
