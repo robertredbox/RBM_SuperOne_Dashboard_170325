@@ -10,7 +10,8 @@ const PlatformDownloads = () => {
   // Data states
   const [allDailyData, setAllDailyData] = useState([]); // Store ALL data
   const [dailyData, setDailyData] = useState([]); // Store filtered data to display
-  const [weeklyData, setWeeklyData] = useState([]);
+  const [allWeeklyData, setAllWeeklyData] = useState([]); // Store ALL weekly data
+  const [weeklyData, setWeeklyData] = useState([]); // Store filtered weekly data
   const [totals, setTotals] = useState({ android: 0, ios: 0, total: 0 });
   
   // Sample data to use if loading fails
@@ -52,7 +53,7 @@ const PlatformDownloads = () => {
     return standardDate;
   }
 
-  // Fixed function to filter data by date range
+  // Improved function to filter data by date range
   function filterByDays(data, days) {
     if (!data || data.length === 0) return [];
     
@@ -62,13 +63,17 @@ const PlatformDownloads = () => {
     // Find the most recent date in the data
     const latestDate = new Date(sortedData[0].date);
     
-    // Calculate the cutoff date based on the latest date
-    const cutoffDate = new Date(latestDate);
+    // Calculate the cutoff date based on the latest date (March 17, 2025)
+    const referenceDate = new Date('2025-03-17');
+    const cutoffDate = new Date(referenceDate);
     cutoffDate.setDate(cutoffDate.getDate() - days);
     const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
     
     // Filter the data to include only dates within the range
-    return data.filter(item => item.date >= cutoffDateStr);
+    return sortedData.filter(item => {
+      const itemDate = new Date(item.date);
+      return itemDate >= cutoffDate && itemDate <= referenceDate;
+    });
   }
 
   // Function to calculate totals
@@ -113,7 +118,8 @@ const PlatformDownloads = () => {
           displayWeek: `Week ${currentWeek}`,
           android: weekAndroid,
           ios: weekIOS,
-          total: weekTotal
+          total: weekTotal,
+          startDate: new Date(weekStart).toISOString().split('T')[0] // Store start date for filtering
         });
         
         // Start a new week
@@ -141,11 +147,28 @@ const PlatformDownloads = () => {
         displayWeek: `Week ${currentWeek}`,
         android: weekAndroid,
         ios: weekIOS,
-        total: weekTotal
+        total: weekTotal,
+        startDate: new Date(weekStart).toISOString().split('T')[0] // Store start date for filtering
       });
     }
     
     return weeklyData;
+  }
+
+  // Function to filter weekly data based on time range
+  function filterWeeklyData(weeklyData, days) {
+    if (!weeklyData || weeklyData.length === 0) return [];
+    
+    // Calculate the cutoff date
+    const referenceDate = new Date('2025-03-17');
+    const cutoffDate = new Date(referenceDate);
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+    const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
+    
+    // Filter weekly data where start date is within range
+    return weeklyData
+      .filter(week => week.startDate >= cutoffDateStr)
+      .sort((a, b) => a.shortWeek.localeCompare(b.shortWeek));
   }
 
   // Load and process data
@@ -158,8 +181,8 @@ const PlatformDownloads = () => {
         try {
           // Check if window.fs is available
           if (typeof window.fs !== 'undefined' && typeof window.fs.readFile === 'function') {
-            // Load Android data
-            const androidDataRaw = await window.fs.readFile('android_data.csv', { encoding: 'utf8' });
+            // Load Android data (using new v2 file name)
+            const androidDataRaw = await window.fs.readFile('android_data_v2.csv', { encoding: 'utf8' });
             const parsedAndroidData = Papa.parse(androidDataRaw, {
               header: true,
               skipEmptyLines: true,
@@ -167,25 +190,30 @@ const PlatformDownloads = () => {
             });
             
             // Load iOS data
-            const iosDataRaw = await window.fs.readFile('ios_downloads.csv', { encoding: 'utf8' });
-            const parsedIOSRaw = Papa.parse(iosDataRaw, {
-              header: true,
-              skipEmptyLines: true,
-              dynamicTyping: true
-            });
+            const iosDataRaw = await window.fs.readFile('superone ios countries downloads.csv', { encoding: 'utf8' });
+            const iosLines = iosDataRaw.split('\n');
+            const iosHeaderLine = iosLines[4]; // The 5th line has the actual headers
+            const iosDataLines = iosLines.slice(5); // Data starts from line 6
             
-            // Process iOS data
-            const iosDownloads = parsedIOSRaw.data
-              .filter(row => {
-                if (!row.Name || row["Super.One Fan Battle"] === undefined) return false;
-                const dateParts = row.Name.split('/');
-                return dateParts.length === 3;
-              })
-              .map(row => ({
-                date: row.Name,
-                downloads: typeof row["Super.One Fan Battle"] === 'number' ? row["Super.One Fan Battle"] : 
-                            (parseInt(row["Super.One Fan Battle"]) || 0)
-              }));
+            // Process iOS data - new structure with country columns
+            const iosDownloads = [];
+            iosDataLines.forEach(line => {
+              const columns = line.split(',');
+              if (columns.length < 2 || !columns[0].includes('/')) return;
+              
+              const dateStr = columns[0]; // Format: MM/DD/YY
+              
+              // Sum all country downloads (starting from column 1)
+              let totalDownloads = 0;
+              for (let i = 1; i < columns.length; i++) {
+                totalDownloads += parseFloat(columns[i]) || 0;
+              }
+              
+              iosDownloads.push({
+                date: dateStr,
+                downloads: totalDownloads
+              });
+            });
             
             // Process Android data
             const androidDownloads = parsedAndroidData.data
@@ -241,10 +269,10 @@ const PlatformDownloads = () => {
             
             // Generate weekly data
             const generatedWeeklyData = generateWeeklyData(sortedCombinedData);
-            setWeeklyData(generatedWeeklyData);
+            setAllWeeklyData(generatedWeeklyData);
             
             // Filter data based on selected time range
-            updateDataByTimeRange(sortedCombinedData, timeRange);
+            updateDataByTimeRange(sortedCombinedData, generatedWeeklyData, timeRange);
           } else {
             // If window.fs is not available, throw an error to use sample data
             throw new Error('File system API not available');
@@ -253,9 +281,9 @@ const PlatformDownloads = () => {
           console.warn('Error loading data from files, using sample data:', fileError);
           // Store all sample data
           setAllDailyData(sampleData);
+          setAllWeeklyData(sampleWeeklyData);
           // Filter based on selected time range
-          updateDataByTimeRange(sampleData, timeRange);
-          setWeeklyData(sampleWeeklyData);
+          updateDataByTimeRange(sampleData, sampleWeeklyData, timeRange);
         }
         
         setLoading(false);
@@ -264,9 +292,9 @@ const PlatformDownloads = () => {
         setError("Unable to load download data. Using sample data instead.");
         // Store all sample data
         setAllDailyData(sampleData);
+        setAllWeeklyData(sampleWeeklyData);
         // Filter based on selected time range
-        updateDataByTimeRange(sampleData, timeRange);
-        setWeeklyData(sampleWeeklyData);
+        updateDataByTimeRange(sampleData, sampleWeeklyData, timeRange);
         setLoading(false);
       }
     }
@@ -276,10 +304,10 @@ const PlatformDownloads = () => {
   
   // Update data when time range changes
   useEffect(() => {
-    if (allDailyData.length > 0) {
-      updateDataByTimeRange(allDailyData, timeRange);
+    if (allDailyData.length > 0 && allWeeklyData.length > 0) {
+      updateDataByTimeRange(allDailyData, allWeeklyData, timeRange);
     }
-  }, [timeRange, allDailyData]);
+  }, [timeRange, allDailyData, allWeeklyData]);
   
   // Format display date from standard format
   function formatDisplayDate(dateStr) {
@@ -290,28 +318,34 @@ const PlatformDownloads = () => {
   }
   
   // Helper function to update data based on time range
-  const updateDataByTimeRange = (data, selectedRange) => {
-    let filteredData;
+  const updateDataByTimeRange = (dailyDataSource, weeklyDataSource, selectedRange) => {
+    let filteredDailyData;
+    let filteredWeeklyData;
     
     switch (selectedRange) {
       case '7days':
-        filteredData = filterByDays(data, 7);
+        filteredDailyData = filterByDays(dailyDataSource, 7);
+        filteredWeeklyData = filterWeeklyData(weeklyDataSource, 7);
         break;
       case '30days':
-        filteredData = filterByDays(data, 30);
+        filteredDailyData = filterByDays(dailyDataSource, 30);
+        filteredWeeklyData = filterWeeklyData(weeklyDataSource, 30);
         break;
       case '90days':
-        filteredData = filterByDays(data, 90);
+        filteredDailyData = filterByDays(dailyDataSource, 90);
+        filteredWeeklyData = filterWeeklyData(weeklyDataSource, 90);
         break;
       default:
         // Use all data for "All Data" option
-        filteredData = [...data];
+        filteredDailyData = [...dailyDataSource];
+        filteredWeeklyData = [...weeklyDataSource];
         break;
     }
     
     // Update states
-    setDailyData(filteredData);
-    setTotals(calculateTotals(filteredData));
+    setDailyData(filteredDailyData);
+    setWeeklyData(filteredWeeklyData);
+    setTotals(calculateTotals(filteredDailyData));
   };
   
   // Calculate percentages
@@ -370,7 +404,7 @@ const PlatformDownloads = () => {
           Platform Downloads
         </h2>
         <p className="text-gray-600" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
-          iOS vs. Android Downloads (Mar 2024 - Mar 2025)
+          iOS vs. Android Downloads (Dec 2024 - Mar 2025)
         </p>
       </div>
       
@@ -508,6 +542,7 @@ const PlatformDownloads = () => {
           {timeRange === '7days' ? 'Showing data for the last 7 days' : 
            timeRange === '30days' ? 'Showing data for the last 30 days' : 
            'Showing data for the last 90 days'}
+          {' (up until March 17, 2025)'}
         </p>
       </div>
     </div>
