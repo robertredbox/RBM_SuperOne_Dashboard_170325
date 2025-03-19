@@ -70,9 +70,18 @@ const PlatformDownloads = () => {
 
   // Function to filter data by date range
   function filterByDays(data, days) {
-    const now = new Date();
-    const cutoffDate = new Date(now.setDate(now.getDate() - days)).toISOString().split('T')[0];
-    return data.filter(item => item.date >= cutoffDate);
+    if (!data || data.length === 0) return [];
+    
+    // Find the latest date in the data
+    const dates = data.map(item => new Date(item.date));
+    const maxDate = new Date(Math.max.apply(null, dates));
+    
+    // Calculate cutoff date based on the latest date
+    const cutoffDate = new Date(maxDate);
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+    const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
+    
+    return data.filter(item => item.date >= cutoffDateStr);
   }
 
   // Function to calculate totals
@@ -82,6 +91,74 @@ const PlatformDownloads = () => {
       ios: data.reduce((sum, item) => sum + (item.ios || 0), 0),
       total: data.reduce((sum, item) => sum + (item.total || 0), 0)
     };
+  }
+  
+  // Function to generate weekly data from daily data
+  function generateWeeklyData(dailyData) {
+    if (!dailyData || dailyData.length === 0) return [];
+    
+    // Sort data by date
+    const sortedData = [...dailyData].sort((a, b) => a.date.localeCompare(b.date));
+    
+    // Find the first date
+    const firstDate = new Date(sortedData[0].date);
+    
+    // Group data by week
+    const weeklyData = [];
+    let currentWeek = 1;
+    let weekStart = new Date(firstDate);
+    let weekAndroid = 0;
+    let weekIOS = 0;
+    let weekTotal = 0;
+    let daysInWeek = 0;
+    
+    sortedData.forEach(dayData => {
+      const currentDate = new Date(dayData.date);
+      const daysDiff = Math.floor((currentDate - weekStart) / (1000 * 60 * 60 * 24));
+      
+      // If we've moved to a new week
+      if (daysDiff >= 7) {
+        // Save the completed week
+        const weekDateStr = weekStart.toISOString().split('T')[0].substring(5); // MM-DD format
+        weeklyData.push({
+          week: `Week ${currentWeek} (${weekDateStr})`,
+          shortWeek: `W${currentWeek}`,
+          displayWeek: `Week ${currentWeek}`,
+          android: weekAndroid,
+          ios: weekIOS,
+          total: weekTotal
+        });
+        
+        // Start a new week
+        currentWeek++;
+        weekStart = new Date(currentDate);
+        weekAndroid = dayData.android || 0;
+        weekIOS = dayData.ios || 0;
+        weekTotal = dayData.total || 0;
+        daysInWeek = 1;
+      } else {
+        // Add to current week
+        weekAndroid += dayData.android || 0;
+        weekIOS += dayData.ios || 0;
+        weekTotal += dayData.total || 0;
+        daysInWeek++;
+      }
+    });
+    
+    // Add the last week if it has data
+    if (daysInWeek > 0) {
+      const weekDateStr = weekStart.toISOString().split('T')[0].substring(5); // MM-DD format
+      weeklyData.push({
+        week: `Week ${currentWeek} (${weekDateStr})`,
+        shortWeek: `W${currentWeek}`,
+        displayWeek: `Week ${currentWeek}`,
+        android: weekAndroid,
+        ios: weekIOS,
+        total: weekTotal
+      });
+    }
+    
+    return weeklyData;
   }
 
   // Load and process data
@@ -113,20 +190,23 @@ const PlatformDownloads = () => {
             // Process iOS data
             const iosDownloads = parsedIOSRaw.data
               .filter(row => {
-                if (!row.Name || !row["Super.One Fan Battle"]) return false;
+                if (!row.Name || row["Super.One Fan Battle"] === undefined) return false;
                 const dateParts = row.Name.split('/');
                 return dateParts.length === 3;
               })
               .map(row => ({
                 date: row.Name,
-                downloads: typeof row["Super.One Fan Battle"] === 'number' ? row["Super.One Fan Battle"] : 0
+                downloads: typeof row["Super.One Fan Battle"] === 'number' ? row["Super.One Fan Battle"] : 
+                            (parseInt(row["Super.One Fan Battle"]) || 0)
               }));
             
             // Process Android data
-            const androidDownloads = parsedAndroidData.data.map(row => ({
-              date: row.Date,
-              downloads: row["Store listing acquisitions: All countries / regions"] || 0
-            }));
+            const androidDownloads = parsedAndroidData.data
+              .filter(row => row.Date && row["Store listing acquisitions: All countries / regions"] !== undefined)
+              .map(row => ({
+                date: row.Date,
+                downloads: row["Store listing acquisitions: All countries / regions"] || 0
+              }));
             
             // Combine the datasets
             const dateMap = new Map();
@@ -168,6 +248,10 @@ const PlatformDownloads = () => {
             // Convert to array and sort by date
             const sortedCombinedData = Array.from(dateMap.values())
               .sort((a, b) => a.date.localeCompare(b.date));
+            
+            // Generate weekly data
+            const generatedWeeklyData = generateWeeklyData(sortedCombinedData);
+            setWeeklyData(generatedWeeklyData);
             
             // Update state based on selected time range
             updateDataByTimeRange(sortedCombinedData, timeRange);
@@ -290,7 +374,7 @@ const PlatformDownloads = () => {
           Platform Downloads
         </h2>
         <p className="text-gray-600" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
-          iOS vs. Android Downloads (Jan 30 - Mar 15, 2025)
+          iOS vs. Android Downloads (Jan 30 - Mar 19, 2025)
         </p>
       </div>
       
@@ -323,7 +407,7 @@ const PlatformDownloads = () => {
             onClick={() => setTimeRange('365days')}
             style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}
           >
-            Last 365 Days
+            All Data
           </button>
         </div>
       </div>
@@ -427,7 +511,7 @@ const PlatformDownloads = () => {
         <p className="text-sm text-gray-600 mt-3" style={{ fontFamily: '"Roboto", sans-serif', fontWeight: 400 }}>
           {timeRange === '7days' ? 'Showing data for the last 7 days' : 
            timeRange === '30days' ? 'Showing data for the last 30 days' : 
-           'Showing data for the last 365 days'}
+           'Showing all available data (Jan 30 - Mar 19, 2025)'}
         </p>
       </div>
     </div>
